@@ -1,0 +1,29 @@
+<header class="site-header">
+  <a href="{{ '/' | relative_url }}" class="site-brand">{{ site.title }}</a>
+  <div class="site-nav-wrap">
+    <nav class="site-nav" aria-label="Primary">
+      {% for item in site.nav %}
+        {% assign current = page.url | default: "/" %}
+        {% if current == item.url %}<a href="{{ item.url | relative_url }}" class="is-active" aria-current="page">{{ item.label }}</a>{% else %}<a href="{{ item.url | relative_url }}">{{ item.label }}</a>{% endif %}
+      {% endfor %}
+    </nav>
+    <button class="theme-toggle" type="button" aria-label="Toggle light / dark theme" title="Toggle theme">
+      <svg class="icon-sun" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+        <circle cx="8" cy="8" r="3" fill="currentColor"/>
+        <g stroke="currentColor" stroke-width="1.4" stroke-linecap="round">
+          <line x1="8" y1="1.5" x2="8" y2="3.2"/>
+          <line x1="8" y1="12.8" x2="8" y2="14.5"/>
+          <line x1="1.5" y1="8" x2="3.2" y2="8"/>
+          <line x1="12.8" y1="8" x2="14.5" y2="8"/>
+          <line x1="3.4" y1="3.4" x2="4.6" y2="4.6"/>
+          <line x1="11.4" y1="11.4" x2="12.6" y2="12.6"/>
+          <line x1="3.4" y1="12.6" x2="4.6" y2="11.4"/>
+          <line x1="11.4" y1="4.6" x2="12.6" y2="3.4"/>
+        </g>
+      </svg>
+      <svg class="icon-moon" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+        <path d="M13.5 10.2A5.5 5.5 0 0 1 6 2.5c0-.4 0-.8.1-1.1A6.5 6.5 0 1 0 14.6 11a5.5 5.5 0 0 1-1.1-.8z" fill="currentColor"/>
+      </svg>
+    </button>
+  </div>
+</header>

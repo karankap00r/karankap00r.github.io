@@ -1,0 +1,32 @@
+---
+layout: default
+---
+<header class="page-header">
+  <h1 class="page-title">{{ page.title }}</h1>
+  {% if page.description %}<p class="page-lede">{{ page.description }}</p>{% endif %}
+</header>
+
+{% if page.tag %}
+  {% assign filtered = site.projects | where_exp: "p", "p.tags contains page.tag" | sort: "date" | reverse %}
+{% else %}
+  {% assign filtered = site.projects | sort: "date" | reverse %}
+{% endif %}
+{% assign last_year = "" %}
+
+{% if filtered.size == 0 %}
+  <p class="empty">Nothing here yet.</p>
+{% else %}
+  <section class="projects">
+  {% for project in filtered %}
+    {% assign year = project.date | date: "%Y" %}
+    {% if year != last_year %}
+      {% unless forloop.first %}</div>{% endunless %}
+      <h2 class="year">{{ year }}</h2>
+      <div class="year-group">
+      {% assign last_year = year %}
+    {% endif %}
+    {% include project_row.html project=project %}
+    {% if forloop.last %}</div>{% endif %}
+  {% endfor %}
+  </section>
+{% endif %}

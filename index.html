@@ -1,0 +1,58 @@
+---
+layout: default
+---
+
+<section class="hero">
+  <h1 class="hero-name">{{ site.title }}</h1>
+  <p class="hero-bio">Engineer at Zepto. I build software during the day and small tools, prototypes, and AI experiments outside it. This site is the latter — a public log of things I've made and things I've written.</p>
+</section>
+
+<section class="now">
+  <h2 class="section-label">Currently</h2>
+  <p>Working on quick-commerce systems at Zepto. On the side, exploring agentic workflows and shipping small AI skills. <em>(Edit this line in <code>index.html</code> as things change.)</em></p>
+</section>
+
+{% assign recent_projects = site.projects | sort: "date" | reverse %}
+{% if recent_projects.size > 0 %}
+<section class="cat">
+  <header class="cat-header">
+    <h2 class="cat-title">Recent</h2>
+    <a class="cat-all" href="{{ '/prototypes/' | relative_url }}">all prototypes →</a>
+  </header>
+  <div class="cat-list">
+    {% for project in recent_projects limit: site.home.recent_projects %}
+      {% include project_row.html project=project %}
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+
+{% assign recent_posts = site.posts %}
+{% if recent_posts.size > 0 %}
+<section class="cat">
+  <header class="cat-header">
+    <h2 class="cat-title">Writing</h2>
+    <a class="cat-all" href="{{ '/blogs/' | relative_url }}">all posts →</a>
+  </header>
+  <div class="cat-list post-list">
+    {% for post in recent_posts limit: site.home.recent_posts %}
+      <article class="post-row">
+        <div class="project-row-top">
+          <h3 class="project-title"><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h3>
+          <span class="project-date">{{ post.date | date: "%b %d, %Y" }}</span>
+        </div>
+        {% if post.description %}<p class="project-desc">{{ post.description }}</p>{% endif %}
+      </article>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+
+<section class="elsewhere">
+  <h2 class="section-label">Elsewhere</h2>
+  <p>
+    <a href="https://github.com/">github</a> ·
+    <a href="https://www.linkedin.com/in/kk1610/">linkedin</a> ·
+    <a href="mailto:{{ site.email }}">{{ site.email }}</a>
+  </p>
+</section>

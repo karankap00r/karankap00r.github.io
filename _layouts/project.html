@@ -1,0 +1,38 @@
+---
+layout: default
+---
+<nav class="project-nav" aria-label="Back to listings">
+  <a href="{{ '/' | relative_url }}">← all projects</a>
+</nav>
+
+<article class="project-page">
+  <header class="project-page-header">
+    <h1 class="page-title">{{ page.title }}</h1>
+    {% if page.description %}<p class="page-lede">{{ page.description }}</p>{% endif %}
+
+    <div class="project-page-meta">
+      <span class="project-date">{{ page.date | date: "%b %Y" }}</span>
+      <span class="project-tags">
+        {% for tag in page.tags %}<span class="tag">{{ tag }}</span>{% unless forloop.last %} · {% endunless %}{% endfor %}
+      </span>
+    </div>
+
+    {% assign has_links = false %}
+    {% if page.links.demo and page.links.demo != "#" %}{% assign has_links = true %}{% endif %}
+    {% if page.links.source and page.links.source != "#" %}{% assign has_links = true %}{% endif %}
+    {% if page.links.docs and page.links.docs != "#" %}{% assign has_links = true %}{% endif %}
+    {% if page.links.writeup and page.links.writeup != "#" %}{% assign has_links = true %}{% endif %}
+    {% if has_links %}
+    <div class="project-page-links">
+      {% if page.links.demo and page.links.demo != "#" %}<a href="{{ page.links.demo }}">demo →</a>{% endif %}
+      {% if page.links.source and page.links.source != "#" %}<a href="{{ page.links.source }}">source →</a>{% endif %}
+      {% if page.links.docs and page.links.docs != "#" %}<a href="{{ page.links.docs }}">docs →</a>{% endif %}
+      {% if page.links.writeup and page.links.writeup != "#" %}<a href="{{ page.links.writeup }}">writeup →</a>{% endif %}
+    </div>
+    {% endif %}
+  </header>
+
+  <div class="page-body project-body">
+    {{ content }}
+  </div>
+</article>

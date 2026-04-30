@@ -1,0 +1,55 @@
+title: Karan Kapoor
+description: Things I've built.
+author: Karan Kapoor
+email: karankapoor.nsit@gmail.com
+
+# Deployment
+# - User site (username.github.io): leave url and baseurl empty.
+# - Project site (username.github.io/repo-name): set baseurl to "/repo-name".
+# - Custom domain: set url to "https://yourdomain.com" and add a CNAME file.
+url: ""
+baseurl: ""
+
+# Build
+markdown: kramdown
+permalink: pretty
+timezone: UTC
+
+# No theme — all layouts/includes/assets live in this repo.
+theme: null
+
+# Projects live in _projects/ as one .md file per project. Front matter holds
+# the metadata; the markdown body is what shows up on the per-project page.
+collections:
+  projects:
+    output: true
+    permalink: /projects/:path/
+
+# Default layout for everything in the projects collection.
+defaults:
+  - scope:
+      path: ""
+      type: projects
+    values:
+      layout: project
+
+# Top navigation. Order controls render order.
+nav:
+  - { label: "Home",       url: "/" }
+  - { label: "Prototypes", url: "/prototypes/" }
+  - { label: "Blogs",      url: "/blogs/" }
+  - { label: "About",      url: "/about/" }
+
+# How many recent items to preview on the homepage.
+home:
+  recent_projects: 6
+  recent_posts: 4
+
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - vendor
+  - README.md
+  - .bundle
+  - node_modules
+  - .DS_Store

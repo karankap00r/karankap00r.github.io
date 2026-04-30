@@ -1,0 +1,23 @@
+{% assign p = include.project %}
+<article class="project" data-tags="{{ p.tags | join: ' ' }}">
+  <div class="project-row-top">
+    <h3 class="project-title">
+      <a href="{{ p.url | relative_url }}">{{ p.title }}</a>
+    </h3>
+    <span class="project-tags-right">
+      {% for tag in p.tags %}<span class="tag">{{ tag }}</span>{% unless forloop.last %} · {% endunless %}{% endfor %}
+    </span>
+  </div>
+  <p class="project-desc">{{ p.description }}</p>
+  <div class="project-meta">
+    <span class="project-date">{{ p.date | date: "%b %Y" }}</span>
+    <span class="project-links">
+      {% if p.links.demo and p.links.demo != "#" %}<a href="{{ p.links.demo }}">demo</a>{% endif %}
+      {% if p.links.source and p.links.source != "#" %}<a href="{{ p.links.source }}">source</a>{% endif %}
+      {% if p.links.docs and p.links.docs != "#" %}<a href="{{ p.links.docs }}">docs</a>{% endif %}
+      {% if p.links.writeup and p.links.writeup != "#" %}<a href="{{ p.links.writeup }}">writeup</a>{% endif %}
+      {% assign body = p.content | strip %}
+      {% if body != "" %}<a href="{{ p.url | relative_url }}" class="read-more">read more →</a>{% endif %}
+    </span>
+  </div>
+</article>
