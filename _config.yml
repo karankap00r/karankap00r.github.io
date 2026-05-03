@@ -18,6 +18,20 @@ timezone: UTC
 # No theme — all layouts/includes/assets live in this repo.
 theme: null
 
+# Plugins. jekyll-feed generates /feed.xml with all blog posts.
+# (github-pages gem includes both of these by default.)
+plugins:
+  - jekyll-feed
+  - jekyll-seo-tag
+
+# RSS feed config (consumed by jekyll-feed).
+feed:
+  path: feed.xml
+
+# Buttondown handle for the footer subscribe form. Replace with your actual
+# Buttondown username (sign up at buttondown.com — see README).
+buttondown_username: CHANGE_ME
+
 # Projects live in _projects/ as one .md file per project. Front matter holds
 # the metadata; the markdown body is what shows up on the per-project page.
 collections:

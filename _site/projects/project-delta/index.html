@@ -9,8 +9,15 @@
   <meta property="og:title" content="Project Delta">
   <meta property="og:description" content="One sentence on what it does. A second sentence on the trigger or workflow it captures.">
   <meta property="og:type" content="website">
+  <link rel="alternate" type="application/rss+xml" title="Karan Kapoor" href="/feed.xml">
+
+  <!-- Newsreader: full weight + italic range, optical sizing. Same as darioamodei.com. -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&display=swap" rel="stylesheet">
+
   <link rel="stylesheet" href="/assets/style.css">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect x='0' y='0' width='8' height='8' fill='%231a1a1a'/%3E%3Crect x='8' y='8' width='8' height='8' fill='%231a1a1a'/%3E%3C/svg%3E">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%23f5efe4'/%3E%3Ctext x='2' y='13' font-family='Georgia,serif' font-size='13' fill='%232a241e'%3EK%3C/text%3E%3C/svg%3E">
 
   <!-- Theme restore — runs synchronously before paint to avoid flash. -->
   <script>
@@ -20,37 +27,11 @@
         if (saved === 'light' || saved === 'dark') {
           document.documentElement.setAttribute('data-theme', saved);
         }
-      } catch (e) { /* private mode etc. — fall through to OS preference */ }
+      } catch (e) { /* private mode etc. */ }
     })();
   </script>
 </head>
 <body>
-  <!-- Top-left corner ornament — small block cluster -->
-  <svg class="deco-corner" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
-    <rect class="p-1" x="0"  y="0"  width="12" height="12"/>
-    <rect class="p-2" x="12" y="0"  width="12" height="12"/>
-    <rect class="p-3" x="0"  y="12" width="12" height="12"/>
-  </svg>
-
-  <!-- Top-right corner ornament — mirrored S-piece silhouette -->
-  <svg class="deco-corner-tr" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
-    <rect class="p-1" x="12" y="0"  width="12" height="12"/>
-    <rect class="p-2" x="24" y="0"  width="12" height="12"/>
-    <rect class="p-3" x="0"  y="12" width="12" height="12"/>
-    <rect class="p-3" x="12" y="12" width="12" height="12"/>
-  </svg>
-
-  <!-- Vertical pixel ribbon along the left edge, vertically centered -->
-  <div class="deco-ribbon" aria-hidden="true"></div>
-
-  <!-- Mid-left small floating L-piece -->
-  <svg class="deco-float-left" viewBox="0 0 36 48" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
-    <rect class="p-1" x="0"  y="0"  width="12" height="12"/>
-    <rect class="p-2" x="0"  y="12" width="12" height="12"/>
-    <rect class="p-3" x="0"  y="24" width="12" height="12"/>
-    <rect class="p-4" x="12" y="24" width="12" height="12"/>
-  </svg>
-
   <header class="site-header">
   <a href="/" class="site-brand">Karan Kapoor</a>
   <div class="site-nav-wrap">
@@ -135,73 +116,33 @@
 
   </main>
   <footer class="site-footer">
-  <p>
-    <a href="https://github.com/">github</a> ·
-    <a href="https://www.linkedin.com/in/kk1610/">linkedin</a> ·
-    <a href="mailto:karankapoor.nsit@gmail.com">karankapoor.nsit@gmail.com</a>
-  </p>
+  <section class="subscribe">
+    <h2 class="section-label">Subscribe</h2>
+    <p class="subscribe-lede">New posts and projects, delivered to your inbox. No spam, unsubscribe anytime. Or follow via <a href="/feed.xml">RSS</a>.</p>
+    <form class="subscribe-form"
+          action="https://buttondown.com/api/emails/embed-subscribe/CHANGE_ME"
+          method="post"
+          target="popupwindow"
+          onsubmit="window.open('https://buttondown.com/CHANGE_ME', 'popupwindow')">
+      <input type="email" name="email" placeholder="you@example.com" required aria-label="Email address">
+      <input type="hidden" value="1" name="embed">
+      <button type="submit">Subscribe</button>
+    </form>
+  </section>
+
+  <div class="footer-meta">
+    <p class="footer-links">
+      <a href="https://github.com/">github</a> ·
+      <a href="https://www.linkedin.com/in/kk1610/">linkedin</a> ·
+      <a href="https://karankap00r.medium.com/">medium</a> ·
+      <a href="mailto:karankapoor.nsit@gmail.com">karankapoor.nsit@gmail.com</a>
+    </p>
+    <p class="footer-colophon">© 2026 Karan Kapoor · <a href="/feed.xml">RSS</a></p>
+  </div>
 </footer>
 
 
-  <!-- Decorative tetris stack, bottom-right. Hidden on small screens. -->
-  <svg class="deco-tetris" viewBox="0 0 96 192" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
-    <g class="p-i">
-      <rect x="0"  y="180" width="12" height="12"/>
-      <rect x="12" y="180" width="12" height="12"/>
-      <rect x="24" y="180" width="12" height="12"/>
-      <rect x="36" y="180" width="12" height="12"/>
-    </g>
-    <g class="p-o">
-      <rect x="72" y="180" width="12" height="12"/>
-      <rect x="84" y="180" width="12" height="12"/>
-      <rect x="72" y="168" width="12" height="12"/>
-      <rect x="84" y="168" width="12" height="12"/>
-    </g>
-    <g class="p-l">
-      <rect x="48" y="180" width="12" height="12"/>
-      <rect x="48" y="168" width="12" height="12"/>
-      <rect x="48" y="156" width="12" height="12"/>
-      <rect x="60" y="156" width="12" height="12"/>
-    </g>
-    <g class="p-t">
-      <rect x="0"  y="144" width="12" height="12"/>
-      <rect x="12" y="144" width="12" height="12"/>
-      <rect x="24" y="144" width="12" height="12"/>
-      <rect x="12" y="132" width="12" height="12"/>
-    </g>
-    <g class="p-s">
-      <rect x="48" y="144" width="12" height="12"/>
-      <rect x="60" y="144" width="12" height="12"/>
-      <rect x="60" y="132" width="12" height="12"/>
-      <rect x="72" y="132" width="12" height="12"/>
-    </g>
-    <g class="p-j">
-      <rect x="84" y="84"  width="12" height="12"/>
-      <rect x="84" y="96"  width="12" height="12"/>
-      <rect x="84" y="108" width="12" height="12"/>
-      <rect x="72" y="108" width="12" height="12"/>
-    </g>
-    <g class="p-z">
-      <rect x="0"  y="108" width="12" height="12"/>
-      <rect x="12" y="108" width="12" height="12"/>
-      <rect x="12" y="120" width="12" height="12"/>
-      <rect x="24" y="120" width="12" height="12"/>
-    </g>
-    <g class="p-o2">
-      <rect x="36" y="48" width="12" height="12"/>
-      <rect x="48" y="48" width="12" height="12"/>
-      <rect x="36" y="60" width="12" height="12"/>
-      <rect x="48" y="60" width="12" height="12"/>
-    </g>
-    <g class="p-i2">
-      <rect x="0"  y="0"  width="12" height="12"/>
-      <rect x="0"  y="12" width="12" height="12"/>
-      <rect x="0"  y="24" width="12" height="12"/>
-      <rect x="0"  y="36" width="12" height="12"/>
-    </g>
-  </svg>
-
-  <!-- Theme toggle behavior. Inline so there's no extra request. -->
+  <!-- Theme toggle behavior. -->
   <script>
     (function () {
       var btn = document.querySelector('.theme-toggle');
@@ -210,7 +151,6 @@
         var root = document.documentElement;
         var current = root.getAttribute('data-theme');
         if (!current) {
-          // No explicit theme yet — flip away from the OS preference.
           var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
           current = prefersDark ? 'dark' : 'light';
         }

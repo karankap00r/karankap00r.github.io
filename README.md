@@ -59,6 +59,76 @@ Body content in markdown.
 
 Posts appear on `/blogs/` and the homepage.
 
+## Subscribers (email + RSS)
+
+The footer has a subscribe form and an RSS feed. They run on different infrastructure but stay in sync — one source of truth (the markdown files in `_posts/`), two delivery channels.
+
+### How it works
+
+```
+                ┌──────────────────────┐
+                │  _posts/*.md (repo)  │ ← single source of truth
+                └─────────┬────────────┘
+                          │  git push → GitHub Pages build
+                          ▼
+                ┌──────────────────────┐
+                │  /feed.xml (static)  │ ← jekyll-feed plugin generates on every build
+                └─────────┬────────────┘
+                          │
+            ┌─────────────┴─────────────┐
+            ▼                           ▼
+    ┌──────────────┐           ┌────────────────────┐
+    │ RSS readers  │           │  Buttondown        │
+    │ (Feedly etc) │           │  watches the feed  │
+    └──────────────┘           │  → emails subs     │
+                               └────────────────────┘
+```
+
+The `jekyll-feed` plugin (already enabled) renders `/feed.xml` from `_posts/` on every build. RSS readers poll it directly — no extra service needed for that channel.
+
+For email, we point the footer subscribe form at [Buttondown](https://buttondown.com), which:
+
+- hosts the form and stores subscriber emails in their database (so we don't run one),
+- watches `https://yoursite.com/feed.xml` on a schedule,
+- sends an email when a new `<item>` appears in the feed,
+- handles unsubscribes, double-opt-in confirmation, and bounce/complaint compliance.
+
+### Setting it up
+
+1. Sign up at [buttondown.com](https://buttondown.com) with your email. Free tier (up to 100 subscribers, ~unlimited emails).
+2. In Buttondown, go to Settings → Email Setup → enable "RSS-to-email" and paste your live feed URL (e.g. `https://kk1610.github.io/feed.xml`). Set the schedule to hourly.
+3. Pick your Buttondown handle (e.g. `karankapoor`). Replace `CHANGE_ME` in `_config.yml` (`buttondown_username:`) with that handle. The footer form auto-posts there.
+4. Optional: under Settings → Domain, configure a custom email-from domain so emails come from `karan@karankapoor.me` rather than `karan@buttondown.email`.
+
+### Where each piece of data lives
+
+| Data | Lives in | Why |
+|---|---|---|
+| Post content | `_posts/*.md` in your GitHub repo | One source of truth, version-controlled |
+| Rendered HTML + RSS | GitHub Pages CDN | Static, fast, free |
+| Subscriber email addresses | Buttondown's database | They handle GDPR/CAN-SPAM/CASL compliance |
+| Email send logs / bounces | Buttondown | Audit trail and deliverability |
+| Unsubscribe tokens | Buttondown | Required by law, handled by their links |
+
+### Reliability
+
+Failure modes and what happens:
+
+- **GitHub Pages outage** → site and feed unreachable for the duration; subs queue up in RSS readers, Buttondown's poller retries on its next interval. No data lost.
+- **Buttondown outage** → email sends delayed; new subs may fail to register during the window (form submission errors gracefully). RSS still works. They publish status at `status.buttondown.com`.
+- **You delete or rewrite a post** → RSS reflects the change on next build. Buttondown only sends for *new* `<guid>` items, so editing an existing post doesn't re-send. Republishing a post (changing its date and slug) will re-send.
+- **Spam signups** → Buttondown handles double-opt-in; the user has to click a confirm link before they're added.
+
+### Alternative backends
+
+If you outgrow Buttondown or want something different:
+
+- **Substack** — heavier, more newsletter-y branding, but the simplest end-to-end. Trade-off: less control over the look.
+- **ConvertKit / Beehiiv** — bigger feature surface (sequences, segments). Free tiers exist.
+- **Roll your own** — a Cloudflare Worker + KV for storage + Resend for sending. ~150 lines of code, but you maintain it. Worth it only if you want full control.
+
+The Buttondown choice is the right default: free for your size, opinionated, doesn't lock content into their platform (your posts stay in markdown in your repo).
+
 ## Run locally
 
 ```bash

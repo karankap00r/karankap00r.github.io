@@ -1,7 +1,25 @@
 <footer class="site-footer">
-  <p>
-    <a href="https://github.com/">github</a> ·
-    <a href="https://www.linkedin.com/in/kk1610/">linkedin</a> ·
-    <a href="mailto:{{ site.email }}">{{ site.email }}</a>
-  </p>
+  <section class="subscribe">
+    <h2 class="section-label">Subscribe</h2>
+    <p class="subscribe-lede">New posts and projects, delivered to your inbox. No spam, unsubscribe anytime. Or follow via <a href="{{ '/feed.xml' | relative_url }}">RSS</a>.</p>
+    <form class="subscribe-form"
+          action="https://buttondown.com/api/emails/embed-subscribe/{{ site.buttondown_username | default: 'CHANGE_ME' }}"
+          method="post"
+          target="popupwindow"
+          onsubmit="window.open('https://buttondown.com/{{ site.buttondown_username | default: 'CHANGE_ME' }}', 'popupwindow')">
+      <input type="email" name="email" placeholder="you@example.com" required aria-label="Email address">
+      <input type="hidden" value="1" name="embed">
+      <button type="submit">Subscribe</button>
+    </form>
+  </section>
+
+  <div class="footer-meta">
+    <p class="footer-links">
+      <a href="https://github.com/">github</a> ·
+      <a href="https://www.linkedin.com/in/kk1610/">linkedin</a> ·
+      <a href="https://karankap00r.medium.com/">medium</a> ·
+      <a href="mailto:{{ site.email }}">{{ site.email }}</a>
+    </p>
+    <p class="footer-colophon">© {{ site.time | date: "%Y" }} {{ site.author }} · <a href="{{ '/feed.xml' | relative_url }}">RSS</a></p>
+  </div>
 </footer>

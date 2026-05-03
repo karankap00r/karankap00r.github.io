@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2026-05-03T19:18:37+00:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Karan Kapoor</title><subtitle>Things I&apos;ve built.</subtitle><author><name>Karan Kapoor</name></author><entry><title type="html">Hello, world.</title><link href="http://localhost:4000/2026/04/29/welcome/" rel="alternate" type="text/html" title="Hello, world." /><published>2026-04-29T00:00:00+00:00</published><updated>2026-04-29T00:00:00+00:00</updated><id>http://localhost:4000/2026/04/29/welcome</id><content type="html" xml:base="http://localhost:4000/2026/04/29/welcome/"><![CDATA[<p>This is a placeholder for the first post on this site. Replace the body with whatever you want to write about — software, side projects, what you’re learning, what you’re building.</p>
+
+<h2 id="how-posting-works">How posting works</h2>
+
+<p>Drop a markdown file in <code class="language-plaintext highlighter-rouge">_posts/</code> named <code class="language-plaintext highlighter-rouge">YYYY-MM-DD-slug.md</code>. The date in the filename has to match the <code class="language-plaintext highlighter-rouge">date</code> in the front matter. Front matter takes <code class="language-plaintext highlighter-rouge">title</code>, <code class="language-plaintext highlighter-rouge">date</code>, <code class="language-plaintext highlighter-rouge">description</code> (optional, shown in listings), and <code class="language-plaintext highlighter-rouge">tags</code> (optional).</p>
+
+<p>Commit, push, and the post appears on the <a href="/blogs/">Blogs</a> page and the homepage.</p>
+
+<h2 id="markdown-notes">Markdown notes</h2>
+
+<p>Headings, lists, and links work as you’d expect. Code blocks use triple backticks:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">hello</span><span class="p">():</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">"hi"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<blockquote>
+  <p>Blockquotes look like this.</p>
+</blockquote>
+
+<p>Delete this post when you’re ready to publish your own.</p>]]></content><author><name>Karan Kapoor</name></author><category term="meta" /><summary type="html"><![CDATA[A first post — what this blog is for.]]></summary></entry></feed>
