@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Writing
-description: Notes on software, side projects, and what I'm learning.
+description: Notes on software, side projects, and what I'm learning. Most of these were first published on Medium.
 permalink: /blogs/
 ---
 <header class="page-header">
@@ -10,35 +10,76 @@ permalink: /blogs/
 </header>
 
 {% assign posts_sorted = site.posts %}
-{% assign last_year = "" %}
+{% assign all_tags = site.posts | map: "tags" | join: "," | split: "," | uniq | sort %}
 
-{% if posts_sorted.size == 0 %}
-  <p class="empty">No posts yet.</p>
-{% else %}
-  <section class="post-list">
-  {% for post in posts_sorted %}
-    {% assign year = post.date | date: "%Y" %}
-    {% if year != last_year %}
-      {% unless forloop.first %}</div>{% endunless %}
-      <h2 class="year">{{ year }}</h2>
-      <div class="year-group">
-      {% assign last_year = year %}
-    {% endif %}
-    <article class="post-row">
-      <div class="project-row-top">
-        <h3 class="project-title"><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h3>
-        <span class="project-date">{{ post.date | date: "%b %d, %Y" }}</span>
-      </div>
-      {% if post.description %}<p class="project-desc">{{ post.description }}</p>{% endif %}
-      {% if post.tags and post.tags.size > 0 %}
-      <div class="project-meta">
-        <span class="project-tags">
-          {% for tag in post.tags %}<span class="tag">{{ tag }}</span>{% unless forloop.last %} · {% endunless %}{% endfor %}
-        </span>
-      </div>
+<div class="writing-layout">
+  {% if all_tags.size > 0 %}
+  <aside class="tag-side" aria-label="Filter by tag">
+    <div class="tag-side-inner">
+      <h2 class="section-label">Tags</h2>
+      <ul class="tag-list">
+        <li><a class="tag-link is-active" href="{{ '/blogs/' | relative_url }}" data-tag="">all <span class="tag-count">{{ site.posts.size }}</span></a></li>
+        {% for t in all_tags %}{% assign n = site.posts | where_exp: "p", "p.tags contains t" | size %}
+        <li><a class="tag-link" href="{{ '/blogs/' | relative_url }}?tag={{ t }}" data-tag="{{ t }}">{{ t }} <span class="tag-count">{{ n }}</span></a></li>{% endfor %}
+      </ul>
+      <p class="tag-filter-note" id="tag-filter-note" hidden>Showing <b id="tag-filter-name"></b> · <a href="{{ '/blogs/' | relative_url }}">clear</a></p>
+    </div>
+  </aside>
+  {% endif %}
+
+  {% if posts_sorted.size == 0 %}
+    <p class="empty">No posts yet.</p>
+  {% else %}
+    <section class="post-list" id="post-list">
+    {% assign last_group = "" %}
+    {% for post in posts_sorted %}
+      {% assign group = post.date | date: "%B %Y" %}
+      {% if group != last_group %}
+        {% unless forloop.first %}</div>{% endunless %}
+        <h2 class="year">{{ group }}</h2>
+        <div class="year-group">
+        {% assign last_group = group %}
       {% endif %}
-    </article>
-    {% if forloop.last %}</div>{% endif %}
-  {% endfor %}
-  </section>
-{% endif %}
+      <article class="post-row" data-tags="{{ post.tags | join: ' ' }}">
+        <div class="project-row-top">
+          <h3 class="project-title"><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h3>
+          <span class="project-date">{{ post.date | date: "%b %d, %Y" }}</span>
+        </div>
+        {% if post.description %}<p class="project-desc">{{ post.description }}</p>{% endif %}
+        <div class="project-meta">
+          {% if post.tags and post.tags.size > 0 %}
+          <span class="project-tags">
+            {% for tag in post.tags %}<a class="tag" href="{{ '/blogs/' | relative_url }}?tag={{ tag }}">{{ tag }}</a>{% unless forloop.last %} · {% endunless %}{% endfor %}
+          </span>
+          {% endif %}
+          {% if post.link %}<span class="project-links"><a href="{{ post.link }}" rel="noopener">{{ post.source | default: "original" }} →</a></span>{% endif %}
+        </div>
+      </article>
+      {% if forloop.last %}</div>{% endif %}
+    {% endfor %}
+    </section>
+  {% endif %}
+</div>
+
+<script>
+  (function () {
+    var tag = new URLSearchParams(location.search).get('tag') || '';
+    var rows = document.querySelectorAll('.post-row');
+    var links = document.querySelectorAll('.tag-link');
+    var note = document.getElementById('tag-filter-note');
+    var known = false;
+    links.forEach(function (a) { if (a.dataset.tag === tag) known = true; });
+    if (!known) tag = '';
+    links.forEach(function (a) { a.classList.toggle('is-active', a.dataset.tag === tag); });
+    rows.forEach(function (r) {
+      var has = !tag || (' ' + r.dataset.tags + ' ').indexOf(' ' + tag + ' ') >= 0;
+      r.hidden = !has;
+    });
+    document.querySelectorAll('.year-group').forEach(function (grp) {
+      var any = Array.prototype.some.call(grp.querySelectorAll('.post-row'), function (r) { return !r.hidden; });
+      grp.hidden = !any;
+      var h = grp.previousElementSibling; if (h && h.classList.contains('year')) h.hidden = !any;
+    });
+    if (note && tag) { note.hidden = false; document.getElementById('tag-filter-name').textContent = tag; }
+  })();
+</script>
