@@ -11,7 +11,7 @@ source: Medium
 *if it is indeed what you love*
 
 <figure>
-  <img src="https://cdn-images-1.medium.com/max/1024/0*8Qss9FNkTF6OcBdZ" alt="Photo by Molly Black on Unsplash" loading="lazy">
+  <img src="{{ '/assets/posts/double-down/01.jpg' | relative_url }}" alt="Photo by Molly Black on Unsplash" loading="lazy">
   <figcaption>Photo by <a href="https://unsplash.com/@molxly?utm_source=medium&utm_medium=referral" rel="noopener">Molly Black</a> on <a href="https://unsplash.com?utm_source=medium&utm_medium=referral" rel="noopener">Unsplash</a></figcaption>
 </figure>
 

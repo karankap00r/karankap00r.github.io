@@ -9,7 +9,7 @@ source: Medium
 ---
 
 <figure>
-  <img src="https://cdn-images-1.medium.com/max/1024/0*wv0uy_BRutgkWeI7" alt="Photo by Sigmund on Unsplash" loading="lazy">
+  <img src="{{ '/assets/posts/why-i-wrote-100-wikis/01.jpg' | relative_url }}" alt="Photo by Sigmund on Unsplash" loading="lazy">
   <figcaption>Photo by <a href="https://unsplash.com/@sigmund?utm_source=medium&utm_medium=referral" rel="noopener">Sigmund</a> on <a href="https://unsplash.com?utm_source=medium&utm_medium=referral" rel="noopener">Unsplash</a></figcaption>
 </figure>
 

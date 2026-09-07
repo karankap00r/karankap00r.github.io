@@ -9,7 +9,7 @@ source: Medium
 ---
 
 <figure>
-  <img src="https://cdn-images-1.medium.com/max/1024/0*u03HtJ1X3ZLXL-h8" alt="Photo by Oluwatobi Fasipe on Unsplash" loading="lazy">
+  <img src="{{ '/assets/posts/lessons-from-my-first-year/01.jpg' | relative_url }}" alt="Photo by Oluwatobi Fasipe on Unsplash" loading="lazy">
   <figcaption>Photo by <a href="https://unsplash.com/@fasipe_tobi?utm_source=medium&utm_medium=referral" rel="noopener">Oluwatobi Fasipe</a> on <a href="https://unsplash.com?utm_source=medium&utm_medium=referral" rel="noopener">Unsplash</a></figcaption>
 </figure>
 

@@ -9,7 +9,7 @@ source: Medium
 ---
 
 <figure>
-  <img src="https://cdn-images-1.medium.com/max/1024/0*TkETzW-o2t1s3R5t" alt="Photo by Mike Swigunski on Unsplash" loading="lazy">
+  <img src="{{ '/assets/posts/plan-my-trips/01.jpg' | relative_url }}" alt="Photo by Mike Swigunski on Unsplash" loading="lazy">
   <figcaption>Photo by <a href="https://unsplash.com/@mike_swigunski?utm_source=medium&utm_medium=referral" rel="noopener">Mike Swigunski</a> on <a href="https://unsplash.com?utm_source=medium&utm_medium=referral" rel="noopener">Unsplash</a></figcaption>
 </figure>
 
@@ -20,7 +20,7 @@ If you answered yes to any of the questions above, keep reading.
 This is my story of facing a similar instance, and how I plan my trips now so that I don’t run into a similar situation.
 
 <figure>
-  <img src="https://cdn-images-1.medium.com/max/1024/1*juwMFj2Zl9eqKtaRu5L6iA.jpeg" alt="" loading="lazy">
+  <img src="{{ '/assets/posts/plan-my-trips/02.jpg' | relative_url }}" alt="" loading="lazy">
 </figure>
 
 I had just graduated from NSIT. It was my mother’s long-standing wish to visit Vaishno Devi if everything went well in my school and college education. (*Such is the love of a mother. You can’t measure it.*)
@@ -51,7 +51,7 @@ The theme of the trip dictates almost everything else. Are you taking a romantic
 Based on these, you can often decide to travel lightweight as well, especially if you would be hopping from one place to another. Alternatively, if you are visiting a resort (*like Maldives in the cover photo *[*here*](https://medium.com/exploring-life-with-karan)), you might be okay to pack in a lot of stuff.
 
 <figure>
-  <img src="https://cdn-images-1.medium.com/max/1024/1*aGpVWm9Xs7UoFZLmdrZuFQ.png" alt="A quick view of my Singapore Trip plan" loading="lazy">
+  <img src="{{ '/assets/posts/plan-my-trips/03.png' | relative_url }}" alt="A quick view of my Singapore Trip plan" loading="lazy">
   <figcaption>A quick view of my Singapore Trip plan</figcaption>
 </figure>
 

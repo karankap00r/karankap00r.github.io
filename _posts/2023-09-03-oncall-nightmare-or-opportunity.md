@@ -11,7 +11,7 @@ source: Medium
 *and what to do if you are in one.*
 
 <figure>
-  <img src="https://cdn-images-1.medium.com/max/1024/0*-T1tvr6HuWVbnw5N" alt="Photo by Catalin Pop on Unsplash" loading="lazy">
+  <img src="{{ '/assets/posts/oncall-nightmare-or-opportunity/01.jpg' | relative_url }}" alt="Photo by Catalin Pop on Unsplash" loading="lazy">
   <figcaption>Photo by <a href="https://unsplash.com/@catalinpop?utm_source=medium&utm_medium=referral" rel="noopener">Catalin Pop</a> on <a href="https://unsplash.com?utm_source=medium&utm_medium=referral" rel="noopener">Unsplash</a></figcaption>
 </figure>
 

@@ -11,7 +11,7 @@ source: Medium
 *and how it might shape your perception towards everything*
 
 <figure>
-  <img src="https://cdn-images-1.medium.com/max/1024/0*AYslZZlUs0WuW77a" alt="Photo by Robert Ruggiero on Unsplash" loading="lazy">
+  <img src="{{ '/assets/posts/chasing-serendipity/01.jpg' | relative_url }}" alt="Photo by Robert Ruggiero on Unsplash" loading="lazy">
   <figcaption>Photo by <a href="https://unsplash.com/@robert2301?utm_source=medium&utm_medium=referral" rel="noopener">Robert Ruggiero</a> on <a href="https://unsplash.com?utm_source=medium&utm_medium=referral" rel="noopener">Unsplash</a></figcaption>
 </figure>
 

@@ -11,7 +11,7 @@ source: Medium
 *The interplay of focus and chaos in learning*
 
 <figure>
-  <img src="https://cdn-images-1.medium.com/max/1024/0*CgHWKS1fG3xm7GoK" alt="Photo by Taylor Deas-Melesh on Unsplash" loading="lazy">
+  <img src="{{ '/assets/posts/one-learning-at-a-time/01.jpg' | relative_url }}" alt="Photo by Taylor Deas-Melesh on Unsplash" loading="lazy">
   <figcaption>Photo by <a href="https://unsplash.com/@taylor_deas_melesh?utm_source=medium&utm_medium=referral" rel="noopener">Taylor Deas-Melesh</a> on <a href="https://unsplash.com?utm_source=medium&utm_medium=referral" rel="noopener">Unsplash</a></figcaption>
 </figure>
 

@@ -11,7 +11,7 @@ source: Medium
 *and for me, it’s not Food. Hear from someone who moved there.*
 
 <figure>
-  <img src="https://cdn-images-1.medium.com/max/1024/0*eUvMKIIJgIJ6oW-h" alt="Photo by Mike Enerio on Unsplash" loading="lazy">
+  <img src="{{ '/assets/posts/why-i-love-singapore/01.jpg' | relative_url }}" alt="Photo by Mike Enerio on Unsplash" loading="lazy">
   <figcaption>Photo by <a href="https://unsplash.com/@mikeenerio?utm_source=medium&utm_medium=referral" rel="noopener">Mike Enerio</a> on <a href="https://unsplash.com?utm_source=medium&utm_medium=referral" rel="noopener">Unsplash</a></figcaption>
 </figure>
 
@@ -22,7 +22,7 @@ Here are some of the reasons why I love Singapore:
 ### Safety
 
 <figure>
-  <img src="https://cdn-images-1.medium.com/max/590/1*rMEeT5gcNCnNFXTaFjbdvA.png" alt="" loading="lazy">
+  <img src="{{ '/assets/posts/why-i-love-singapore/02.png' | relative_url }}" alt="" loading="lazy">
 </figure>
 
 I found it really shocking that people were reserving their tables using their phones. People are completely carefree in public areas, even with their children.
@@ -32,7 +32,7 @@ While shocking, I found it a lovely thing to be a part of. Because, at some leve
 ### Discipline
 
 <figure>
-  <img src="https://cdn-images-1.medium.com/max/1024/0*08x1Of4JnjWpj-lI" alt="Photo by Shalev Cohen on Unsplash" loading="lazy">
+  <img src="{{ '/assets/posts/why-i-love-singapore/03.jpg' | relative_url }}" alt="Photo by Shalev Cohen on Unsplash" loading="lazy">
   <figcaption>Photo by <a href="https://unsplash.com/@shalevcohen?utm_source=medium&utm_medium=referral" rel="noopener">Shalev Cohen</a> on <a href="https://unsplash.com?utm_source=medium&utm_medium=referral" rel="noopener">Unsplash</a></figcaption>
 </figure>
 
@@ -43,7 +43,7 @@ People often frown when they hear that chewing gum in public is not allowed. But
 ### Inclusive Culture
 
 <figure>
-  <img src="https://cdn-images-1.medium.com/max/1024/0*Sys9dISLlhyBvSos" alt="Photo by Tim Mossholder on Unsplash" loading="lazy">
+  <img src="{{ '/assets/posts/why-i-love-singapore/04.jpg' | relative_url }}" alt="Photo by Tim Mossholder on Unsplash" loading="lazy">
   <figcaption>Photo by <a href="https://unsplash.com/@timmossholder?utm_source=medium&utm_medium=referral" rel="noopener">Tim Mossholder</a> on <a href="https://unsplash.com?utm_source=medium&utm_medium=referral" rel="noopener">Unsplash</a></figcaption>
 </figure>
 
@@ -54,7 +54,7 @@ This diversity ensures that you do not need to bend yourself to adapt to the soc
 ### Cleanliness and Beauty
 
 <figure>
-  <img src="https://cdn-images-1.medium.com/max/1024/0*meUfRNHGoFPc5zLN" alt="Photo by Duy Nguyen on Unsplash" loading="lazy">
+  <img src="{{ '/assets/posts/why-i-love-singapore/05.jpg' | relative_url }}" alt="Photo by Duy Nguyen on Unsplash" loading="lazy">
   <figcaption>Photo by <a href="https://unsplash.com/@duykhuongxyz?utm_source=medium&utm_medium=referral" rel="noopener">Duy Nguyen</a> on <a href="https://unsplash.com?utm_source=medium&utm_medium=referral" rel="noopener">Unsplash</a></figcaption>
 </figure>
 
@@ -65,7 +65,7 @@ It boasts several beautiful places such as Gardens by the Bay, the Changi Airpor
 ### Huge emphasis on human resources
 
 <figure>
-  <img src="https://cdn-images-1.medium.com/max/1024/0*zXmH_e9zBfDx6eR5" alt="Photo by Jacek Dylag on Unsplash" loading="lazy">
+  <img src="{{ '/assets/posts/why-i-love-singapore/06.jpg' | relative_url }}" alt="Photo by Jacek Dylag on Unsplash" loading="lazy">
   <figcaption>Photo by <a href="https://unsplash.com/@dylu?utm_source=medium&utm_medium=referral" rel="noopener">Jacek Dylag</a> on <a href="https://unsplash.com?utm_source=medium&utm_medium=referral" rel="noopener">Unsplash</a></figcaption>
 </figure>
 
@@ -76,19 +76,19 @@ Now, I do agree that Singapore has its own set of challenges as well, such as th
 Leaving you with a few of my recent clicks here! 😁
 
 <figure>
-  <img src="https://cdn-images-1.medium.com/max/1024/1*GBxY-OPtpcLC7YwefofqvA.jpeg" alt="" loading="lazy">
+  <img src="{{ '/assets/posts/why-i-love-singapore/07.jpg' | relative_url }}" alt="" loading="lazy">
 </figure>
 
 <figure>
-  <img src="https://cdn-images-1.medium.com/max/1024/1*TyGwFU1UBbP_B9WsriPPMQ.jpeg" alt="" loading="lazy">
+  <img src="{{ '/assets/posts/why-i-love-singapore/08.jpg' | relative_url }}" alt="" loading="lazy">
 </figure>
 
 <figure>
-  <img src="https://cdn-images-1.medium.com/max/1024/1*tMv2BCMf389DWD3-UciK4A.jpeg" alt="" loading="lazy">
+  <img src="{{ '/assets/posts/why-i-love-singapore/09.jpg' | relative_url }}" alt="" loading="lazy">
 </figure>
 
 <figure>
-  <img src="https://cdn-images-1.medium.com/max/1024/1*zjEUN4jjHj4T4t1CwojtSA.jpeg" alt="" loading="lazy">
+  <img src="{{ '/assets/posts/why-i-love-singapore/10.jpg' | relative_url }}" alt="" loading="lazy">
 </figure>
 
 Visiting Singapore soon?

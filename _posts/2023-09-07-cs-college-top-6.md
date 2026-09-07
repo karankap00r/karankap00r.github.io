@@ -11,7 +11,7 @@ source: Medium
 *And it's not just solving DSA Problems on CodeChef, Codeforces and Leetcode*
 
 <figure>
-  <img src="https://cdn-images-1.medium.com/max/1024/0*MrnBNwPEK2owzII_" alt="Photo by Jefferson Santos on Unsplash" loading="lazy">
+  <img src="{{ '/assets/posts/cs-college-top-6/01.jpg' | relative_url }}" alt="Photo by Jefferson Santos on Unsplash" loading="lazy">
   <figcaption>Photo by <a href="https://unsplash.com/@jefflssantos?utm_source=medium&utm_medium=referral" rel="noopener">Jefferson Santos</a> on <a href="https://unsplash.com?utm_source=medium&utm_medium=referral" rel="noopener">Unsplash</a></figcaption>
 </figure>
 
@@ -91,15 +91,15 @@ The experience was amazing, to say the least. To be honest, if I could do one th
 Leaving you with a few photographs from my time at the VIT Summer School.
 
 <figure>
-  <img src="https://cdn-images-1.medium.com/max/1024/1*GG_aCPMh3_IGw388bIm_wQ.jpeg" alt="" loading="lazy">
+  <img src="{{ '/assets/posts/cs-college-top-6/02.jpg' | relative_url }}" alt="" loading="lazy">
 </figure>
 
 <figure>
-  <img src="https://cdn-images-1.medium.com/max/1024/1*8uEmiUVwgyFdtq32wQ1mkg.jpeg" alt="" loading="lazy">
+  <img src="{{ '/assets/posts/cs-college-top-6/03.jpg' | relative_url }}" alt="" loading="lazy">
 </figure>
 
 <figure>
-  <img src="https://cdn-images-1.medium.com/max/1024/1*NgbDD_EBE5wLeEowCXKEZA.jpeg" alt="" loading="lazy">
+  <img src="{{ '/assets/posts/cs-college-top-6/04.jpg' | relative_url }}" alt="" loading="lazy">
 </figure>
 
 If you found this interesting, consider clicking the ‘Follow’ button to join me on my journey of learning, exploring, and delving into the expansive world of computer science, and life and sharing my experiences with you. ❤️
