@@ -7,7 +7,7 @@
   --bg-deep:     #ede5d3;
   --text:        #2a241e;   /* warm near-black */
   --text-muted:  #6b6258;
-  --text-faint:  #9a9080;
+  --text-faint: #918675;
   --rule:        #d8cfb8;
   --accent:      #2a241e;
   --accent-soft: #6b6258;
@@ -21,7 +21,7 @@
   --bg-deep:     #25201b;
   --text:        #ede5d3;
   --text-muted:  #a09686;
-  --text-faint:  #5a5248;
+  --text-faint: #71675a;
   --rule:        #36302a;
   --accent:      #ede5d3;
   --accent-soft: #a09686;
@@ -31,7 +31,7 @@
 
 :root[data-theme="paper"] {          /* neutral newsprint */
   --bg: #f4f1e8; --bg-deep: #e9e4d6; --text: #2b2b2b; --text-muted: #666666;
-  --text-faint: #999999; --rule: #d9d4c7; --accent: #2b2b2b; --accent-soft: #666666;
+  --text-faint: #878787; --rule: #d9d4c7; --accent: #2b2b2b; --accent-soft: #666666;
 }
 :root[data-theme="night-owl"] {      /* Night Owl navy */
   --bg: #011627; --bg-deep: #0b2942; --text: #d6deeb; --text-muted: #82aaff;
@@ -39,19 +39,19 @@
 }
 :root[data-theme="omaha"] {          /* cornhusker red on cream */
   --bg: #fbf7f0; --bg-deep: #f1e9dc; --text: #4a1f1f; --text-muted: #8c3b3b;
-  --text-faint: #b98282; --rule: #e5d6c8; --accent: #b0202a; --accent-soft: #8c3b3b;
+  --text-faint: #b57b7b; --rule: #e5d6c8; --accent: #b0202a; --accent-soft: #8c3b3b;
 }
 :root[data-theme="web-rings"] {      /* Netscape defaults: black text, blue links, purple visited */
   --bg: #ffffff; --bg-deep: #f0f0f0; --text: #000000; --text-muted: #0000ee;
   --text-faint: #551a8b; --rule: #c0c0c0; --accent: #0000ee; --accent-soft: #551a8b;
 }
 :root[data-theme="crt-red"] {
-  --bg: #1a0000; --bg-deep: #240404; --text: #ff3b1f; --text-muted: #c42b16;
-  --text-faint: #7a1a0e; --rule: #3a0d08; --accent: #ff3b1f; --accent-soft: #c42b16;
+  --bg: #1a0000; --bg-deep: #240404; --text: #ff3b1f; --text-muted: #e4321a;
+  --text-faint: #b52715; --rule: #3a0d08; --accent: #ff3b1f; --accent-soft: #c42b16;
 }
 :root[data-theme="crt-amber"] {
   --bg: #140f00; --bg-deep: #1e1600; --text: #ffb000; --text-muted: #cc8c00;
-  --text-faint: #7a5400; --rule: #3a2a00; --accent: #ffb000; --accent-soft: #cc8c00;
+  --text-faint: #845b00; --rule: #3a2a00; --accent: #ffb000; --accent-soft: #cc8c00;
 }
 :root[data-theme="crt-green"] {
   --bg: #001a0b; --bg-deep: #03230f; --text: #7dff9a; --text-muted: #4fcf6f;
@@ -61,32 +61,32 @@
   --bg: #0c0c0c; --bg-deep: #161616; --text: #e6e6e6; --text-muted: #a8a8a8;
   --text-faint: #6a6a6a; --rule: #2a2a2a; --accent: #e6e6e6; --accent-soft: #a8a8a8;
 }
-:root[data-theme="90s-vibes"] {      /* blue tile, magenta Times */
-  --bg: #2a7fff; --bg-deep: #1f66cc; --text: #ff2fd6; --text-muted: #ffff00;
-  --text-faint: #ffd0ff; --rule: #ff2fd6; --accent: #ffff00; --accent-soft: #ff2fd6;
+:root[data-theme="90s-vibes"] {      /* blue tile, white Times, yellow and magenta trim */
+  --bg: #1a5ad6; --bg-deep: #164bb3; --text: #ffffff; --text-muted: #ffff00;
+  --text-faint: #ffd0ff; --rule: #ff2fd6; --accent: #ff2fd6; --accent-soft: #ffff00;
 }
 :root[data-theme="valentines-day"] {
   --bg: #ffe4ec; --bg-deep: #ffd1df; --text: #6e0f2e; --text-muted: #b8285a;
-  --text-faint: #d98aa3; --rule: #f3b8c9; --accent: #ff1f7a; --accent-soft: #b8285a;
+  --text-faint: #cb6082; --rule: #f3b8c9; --accent: #ff1f7a; --accent-soft: #b8285a;
 }
 :root[data-theme="st-patricks-day"] {
   --bg: #f0f9ee; --bg-deep: #dff2da; --text: #0f3d1e; --text-muted: #1e7a3c;
-  --text-faint: #7fb58e; --rule: #bfe3c4; --accent: #1e7a3c; --accent-soft: #7fb58e;
+  --text-faint: #59996a; --rule: #bfe3c4; --accent: #1e7a3c; --accent-soft: #7fb58e;
 }
 
 /* ---- Editor palettes, canonical values from each project. ---- */
 
 :root[data-theme="solarized-light"] {   /* ethanschoonover.com/solarized */
-  --bg: #fdf6e3; --bg-deep: #eee8d5; --text: #586e75; --text-muted: #657b83;
-  --text-faint: #93a1a1; --rule: #93a1a1; --accent: #268bd2; --accent-soft: #2aa198;
+  --bg: #fdf6e3; --bg-deep: #eee8d5; --text: #586e75; --text-muted: #5e737a;
+  --text-faint: #7d8e8e; --rule: #93a1a1; --accent: #268bd2; --accent-soft: #2aa198;
 }
 :root[data-theme="solarized-dark"] {
   --bg: #002b36; --bg-deep: #073642; --text: #93a1a1; --text-muted: #839496;
-  --text-faint: #586e75; --rule: #586e75; --accent: #268bd2; --accent-soft: #2aa198;
+  --text-faint: #5f767e; --rule: #586e75; --accent: #268bd2; --accent-soft: #2aa198;
 }
 :root[data-theme="dracula"] {           /* draculatheme.com/spec */
   --bg: #282a36; --bg-deep: #21222c; --text: #f8f8f2; --text-muted: #bd93f9;
-  --text-faint: #6272a4; --rule: #44475a; --accent: #ff79c6; --accent-soft: #8be9fd;
+  --text-faint: #6575a6; --rule: #44475a; --accent: #ff79c6; --accent-soft: #8be9fd;
 }
 :root[data-theme="nord"] {              /* nordtheme.com */
   --bg: #2e3440; --bg-deep: #3b4252; --text: #eceff4; --text-muted: #d8dee9;
@@ -110,7 +110,7 @@
 }
 :root[data-theme="tokyo-night"] {       /* github.com/tokyo-night */
   --bg: #1a1b26; --bg-deep: #16161e; --text: #c0caf5; --text-muted: #a9b1d6;
-  --text-faint: #565f89; --rule: #292e42; --accent: #7aa2f7; --accent-soft: #bb9af7;
+  --text-faint: #5e6896; --rule: #292e42; --accent: #7aa2f7; --accent-soft: #bb9af7;
 }
 
 /* ---- Movie and IDE themes: colour + type + a flourish each. ---- */
@@ -124,10 +124,7 @@
 :root[data-theme="star-wars"] .site-brand {
   font-family: Orbitron, "Exo 2", sans-serif; text-transform: uppercase; letter-spacing: 0.06em;
 }
-:root[data-theme="star-wars"] .hero-bio {
-  transform: perspective(600px) rotateX(24deg); transform-origin: 50% 100%;
-  -webkit-mask-image: linear-gradient(to top, #000 55%, transparent); mask-image: linear-gradient(to top, #000 55%, transparent);
-}
+:root[data-theme="star-wars"] .hero-bio { transform: perspective(900px) rotateX(9deg); transform-origin: 50% 100%; }
 :root[data-theme="star-wars"] .hero-name { text-shadow: 0 0 18px rgba(255, 232, 31, 0.35); letter-spacing: 0.08em; }
 :root[data-theme="star-wars"] .page-header:has(+ .timeline) .page-title::before { content: "Episode IX — "; }
 :root[data-theme="star-wars"] .console-in { caret-color: #4bd5ff; }
@@ -178,13 +175,13 @@
 :root[data-theme="cyberpunk"] h1 { color: var(--accent); text-shadow: 0 0 12px rgba(255, 42, 109, 0.6); }
 
 :root[data-theme="jetbrains-dark"] {   /* Darcula */
-  --bg: #2b2b2b; --bg-deep: #313335; --text: #a9b7c6; --text-muted: #808080;
-  --text-faint: #606366; --rule: #3c3f41; --accent: #cc7832; --accent-soft: #6a8759;
+  --bg: #2b2b2b; --bg-deep: #313335; --text: #a9b7c6; --text-muted: #929292;
+  --text-faint: #74777b; --rule: #3c3f41; --accent: #cc7832; --accent-soft: #6a8759;
 }
 :root[data-theme="jetbrains-dark"] h1 { color: #ffc66d; }
 :root[data-theme="jetbrains-light"] {  /* IntelliJ Light */
-  --bg: #ffffff; --bg-deep: #f2f2f2; --text: #080808; --text-muted: #8c8c8c;
-  --text-faint: #a0a0a0; --rule: #d4d4d4; --accent: #0033b3; --accent-soft: #067d17;
+  --bg: #ffffff; --bg-deep: #f2f2f2; --text: #080808; --text-muted: #757575;
+  --text-faint: #919191; --rule: #d4d4d4; --accent: #0033b3; --accent-soft: #067d17;
 }
 :root[data-theme="jetbrains-light"] h1 { color: #0033b3; }
 :root[data-theme^="jetbrains-"] body {
@@ -194,17 +191,17 @@
 /* ---- Weather ---- */
 :root[data-theme="rain"] {
   --bg: #dfe6ec; --bg-deep: #cfd9e1; --text: #1f2a33; --text-muted: #4f6270;
-  --text-faint: #8a9aa6; --rule: #b8c5cf; --accent: #2e6f95; --accent-soft: #5a8fb0;
+  --text-faint: #708392; --rule: #b8c5cf; --accent: #2e6f95; --accent-soft: #5a8fb0;
 }
 :root[data-theme="rain"] body { font-family: "Libre Baskerville", Georgia, serif; font-size: 17px; }
 :root[data-theme="snow"] {
   --bg: #f7fafc; --bg-deep: #e9f0f5; --text: #1b2a36; --text-muted: #5b6f80;
-  --text-faint: #9fb0bd; --rule: #d3dee6; --accent: #3b82c4; --accent-soft: #9cc3e5;
+  --text-faint: #7890a2; --rule: #d3dee6; --accent: #3b82c4; --accent-soft: #9cc3e5;
 }
 :root[data-theme="snow"] body { font-family: "Josefin Sans", system-ui, sans-serif; font-size: 19px; }
 :root[data-theme="sunshine"] {
   --bg: #fff7dc; --bg-deep: #ffeeb8; --text: #4a3200; --text-muted: #8a6a10;
-  --text-faint: #c2a24a; --rule: #f0d98a; --accent: #ff9f1c; --accent-soft: #ffcf5c;
+  --text-faint: #a68938; --rule: #f0d98a; --accent: #ff9f1c; --accent-soft: #ffcf5c;
 }
 :root[data-theme="sunshine"] body { font-family: Nunito, system-ui, sans-serif; font-size: 19px; }
 :root[data-theme="storm"] {
@@ -229,7 +226,7 @@
    behind the text. Off below 920px; motion off under reduced-motion.
    ================================================================= */
 
-:root { --gutter: max(0px, calc(50vw - 364px)); }
+
 #ambient, #ambient-ui { position: fixed; inset: 0; overflow: hidden; pointer-events: none; }
 #ambient { z-index: -1; }
 #ambient-ui { z-index: 5; }
@@ -276,7 +273,7 @@
 
 /* CRT: scanlines behind the text, and a vignette. */
 :root[data-theme^="crt-"] #ambient::before {
-  content: ""; left: 0; right: 0; width: auto; opacity: 0.5;
+  content: ""; left: 0; right: 0; width: auto; opacity: 0.25;
   background: repeating-linear-gradient(to bottom, rgba(0, 0, 0, 0.35) 0 1px, transparent 1px 3px);
 }
 :root[data-theme^="crt-"] #ambient::after {
@@ -415,6 +412,16 @@ body.snapped main li:nth-child(even), body.snapped main p:nth-of-type(even) {
 :root[data-flip] #ambient, :root[data-flip] #ambient-ui, :root[data-flip] #pets,
 :root[data-flip] .console, :root[data-flip] #rain { filter: invert(1) hue-rotate(180deg); }
 
+/* invert+hue-rotate keeps hue but not contrast for saturated palettes. These
+   flip-only tokens are pre-compensated so what the reader sees AFTER the
+   filter clears WCAG: comments give the post-filter colour and ratio. */
+:root[data-theme="matrix"][data-flip]     { --text: #80ffa0; --text-muted: #40ff70; --text-faint: #00ff41; }      /* → #004400 11.5:1, #006600 7.2:1, #008800 4.6:1 */
+:root[data-theme="crt-red"][data-flip]    { --text: #ffb4a8; --text-muted: #ff9a8c; --text-faint: #cb7163; }      /* → #782d21 8.9:1, #a13c2e 6.1:1, #c46a5c 3.5:1 */
+:root[data-theme="crt-amber"][data-flip]  { --text-muted: #eab070; --text-faint: #c9995f; }                       /* → #7a4000 7.2:1, #8a5a20 5.2:1 */
+:root[data-theme="cyberpunk"][data-flip]  { --accent: #ff8ab0; --text-faint: #9a9ac8; }                           /* h1 → #b33e64 5.0:1, faint → #5e5e8c 5.4:1 */
+:root[data-theme="dracula"][data-flip]    { --text-muted: #d0b4fc; --text-faint: #8ea0d2; }                       /* → 6.6:1, 3.6:1 */
+:root[data-theme="tokyo-night"][data-flip] { --text-faint: #7c85b4; }                                              /* → 3.3:1 */
+
 /* Type swaps that sell the theme. */
 :root[data-theme^="crt-"] body {
   font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
@@ -433,7 +440,7 @@ body.snapped main li:nth-child(even), body.snapped main p:nth-of-type(even) {
     --bg-deep:     #25201b;
     --text:        #ede5d3;
     --text-muted:  #a09686;
-    --text-faint:  #5a5248;
+    --text-faint:  #71675a;
     --rule:        #36302a;
     --accent:      #ede5d3;
     --accent-soft: #a09686;
@@ -851,6 +858,10 @@ a:hover {
   height: auto;
   border-radius: 3px;
 }
+.page-body figure { margin: 1.75rem 0; }
+.page-body figcaption { margin-top: 0.45rem; font-size: 0.85rem; color: var(--text-muted); }
+.page-body figcaption a { color: var(--text-muted); text-decoration-color: var(--rule); }
+.page-body hr { border: 0; border-top: 1px solid var(--rule); margin: 2rem 0; }
 
 /* =================================================================
    Year groups
