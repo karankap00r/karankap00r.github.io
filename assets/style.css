@@ -125,7 +125,13 @@
   font-family: Orbitron, "Exo 2", sans-serif; text-transform: uppercase; letter-spacing: 0.06em;
 }
 :root[data-theme="star-wars"] .hero-bio { transform: perspective(900px) rotateX(9deg); transform-origin: 50% 100%; }
-:root[data-theme="star-wars"] .hero-name { text-shadow: 0 0 18px rgba(255, 232, 31, 0.35); letter-spacing: 0.08em; }
+/* Page-top headings as the logo does it: hollow letters with a yellow
+   outline. The stroke paints under the fill so the black interior stays crisp. */
+:root[data-theme="star-wars"] .hero-name, :root[data-theme="star-wars"] .page-title {
+  color: var(--bg); -webkit-text-stroke: 2px var(--text); paint-order: stroke fill; font-weight: 700;
+  text-shadow: 0 0 18px rgba(255, 232, 31, 0.35); letter-spacing: 0.08em;
+}
+:root[data-theme="star-wars"] .hero-name { -webkit-text-stroke-width: 2.5px; }
 :root[data-theme="star-wars"] .page-header:has(+ .timeline) .page-title::before { content: "Episode IX — "; }
 :root[data-theme="star-wars"] .console-in { caret-color: #4bd5ff; }
 :root[data-theme="star-wars"] .console-prompt { color: #4bd5ff; text-shadow: 0 0 6px rgba(75, 213, 255, 0.8); }
