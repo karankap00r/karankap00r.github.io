@@ -11,8 +11,15 @@
     </div>
     <div class="arcade-game" id="arcade-game" hidden>
       <div class="arcade-hud"><span id="arcade-score">SCORE 0</span><span id="arcade-title"></span><span id="arcade-lives">♥♥♥</span></div>
-      <canvas id="arcade-canvas" width="480" height="360" aria-label="Breakout"></canvas>
-      <p class="arcade-help">← → or mouse to move · space to launch · esc to quit</p>
+      <div class="arcade-stage">
+        <canvas id="arcade-canvas" width="480" height="360" aria-label="Breakout"></canvas>
+        <div class="arcade-buddy" aria-hidden="true">
+          <div class="arcade-bubble" id="arcade-bubble" hidden></div>
+          <canvas id="arcade-buddy" width="140" height="220"></canvas>
+        </div>
+      </div>
+      <p class="arcade-help">← → or mouse to move · space to launch</p>
+      <button type="button" class="arcade-exit" data-arcade-exit>EXIT <small>esc / q</small></button>
     </div>
   </div>
 </div>
@@ -28,7 +35,7 @@
     var canvas = document.getElementById('arcade-canvas'), hudScore = document.getElementById('arcade-score'), hudLives = document.getElementById('arcade-lives');
     var hudTitle = document.getElementById('arcade-title'), gateTitle = document.getElementById('arcade-gate-title');
     if (!box || !canvas) return;
-    var ctx = canvas.getContext('2d'), W = canvas.width, H = canvas.height;
+    var ctx = canvas.getContext('2d'), W = canvas.width, H = canvas.height;   /* logical 480×360; rendered at device resolution, see fit() */
 
     var SKINS = {
       'matrix': {
@@ -67,15 +74,142 @@
       box.hidden = false; gate.hidden = false; game.hidden = true; hint.textContent = ''; code.value = '';
       document.body.classList.add('arcade-open'); code.focus();
     }
-    function close() { stopGame(); box.hidden = true; document.body.classList.remove('arcade-open'); }
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches, shattered = false;
+    /* The page goes first, in the theme's own way (see .arcade-shatter in
+       style.css); the play area appears once it has gone. */
+    function shatter(done) {
+      if (reduce) { done(); return; }
+      shattered = true; gate.hidden = true; box.classList.add('arcade-clear');
+      document.body.classList.add('arcade-shatter');
+      var t = theme(), snd = window.site && window.site.sound;
+      if (snd) { if (t === 'star-wars') snd.trigger('jump'); else if (t === 'avengers') { beep(90, 0.5); snd.trigger('click'); } else beep(220, 0.45); }
+      setTimeout(function () { box.classList.remove('arcade-clear'); done(); }, 1300);
+    }
+    function restore() {
+      if (!shattered) return;
+      shattered = false;
+      document.body.classList.remove('arcade-shatter'); document.body.classList.add('arcade-restore');
+      setTimeout(function () { document.body.classList.remove('arcade-restore'); }, 800);
+    }
+    function close() {
+      stopGame(); box.hidden = true; box.classList.remove('arcade-clear'); box.classList.remove('is-playing'); document.body.classList.remove('arcade-open'); restore();
+      try { if (document.fullscreenElement && document.exitFullscreen) document.exitFullscreen().catch(function () {}); } catch (err) {}
+    }
     form.addEventListener('submit', function (e) {
       e.preventDefault();
-      if (code.value.trim().toLowerCase() === 'play') { hint.textContent = ''; gate.hidden = true; game.hidden = false; startGame(); }
+      if (code.value.trim().toLowerCase() === 'play') {
+        hint.textContent = '';
+        try { if (document.documentElement.requestFullscreen && !document.fullscreenElement) document.documentElement.requestFullscreen({ navigationUI: 'hide' }).catch(function () {}); } catch (err) {}
+        shatter(function () { gate.hidden = true; game.hidden = false; box.classList.add('is-playing'); startGame(); });
+      }
       else { var h = skin().hints; hint.textContent = h[Math.floor(Math.random() * h.length)]; gate.classList.remove('shake'); void gate.offsetWidth; gate.classList.add('shake'); code.select(); beep(180, 0.12); }
     });
     box.querySelector('.arcade-close').addEventListener('click', close);
+    box.querySelector('[data-arcade-exit]').addEventListener('click', close);
     box.addEventListener('click', function (e) { if (e.target === box) close(); });
-    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !box.hidden) { close(); e.stopPropagation(); } }, true);
+    document.addEventListener('keydown', function (e) {
+      if (box.hidden) return;
+      var typing = e.target === code;
+      if (e.key === 'Escape' || (!typing && (e.key === 'q' || e.key === 'Q'))) { close(); e.stopPropagation(); e.preventDefault(); }
+    }, true);
+
+    /* ---- the partner: a figure beside the board who reacts and talks ---- */
+    var bubble = document.getElementById('arcade-bubble');
+    var buddy = { pose: 'idle', until: 0, t: 0, nextIdle: 6000, bubbleTimer: null };
+    var COMPANIONS = {
+      'matrix': {
+        lines: { hello: ['Wake up.', 'Free your mind.'], hit: ['Whoa.', 'Nice.', 'I know kung fu.'], lost: ['Dodge this.', 'Not yet.'], level: ['Deeper.', 'Follow the rabbit.'], over: ['System failure.', 'Guns. Lots of guns.'], win: ['There is no spoon.', 'He is the One.'], idle: ['…', 'Déjà vu.', 'Blue pill?'] },
+        draw: function (c, pose, t) {
+          var lean = pose === 'dodge' ? -0.5 : 0, bob = Math.sin(t / 500) * 2, down = pose === 'sad' ? 6 : 0;
+          c.save(); c.translate(BW / 2, BH - 20); c.rotate(lean); c.translate(0, bob);
+          c.fillStyle = '#0a0a0a'; c.fillRect(-16, -70, 12, 60); c.fillRect(4, -70, 12, 60);                     /* legs */
+          c.fillStyle = '#111'; c.beginPath(); c.moveTo(-26, -150); c.lineTo(26, -150); c.lineTo(34, -60); c.lineTo(-34, -60); c.closePath(); c.fill(); /* coat */
+          c.strokeStyle = 'rgba(0,255,65,0.45)'; c.lineWidth = 1.5; c.stroke();                                    /* rim light */
+          c.fillStyle = '#111'; c.fillRect(-42, -148, 14, pose === 'cheer' ? 30 : 70); c.fillRect(28, -148, 14, 70);   /* arms */
+          if (pose === 'cheer') { c.fillRect(-42, -190, 14, 46); }                                                 /* arm up */
+          c.fillStyle = '#e8c4a0'; c.beginPath(); c.arc(0, -168 + down, 17, 0, 6.28); c.fill();                    /* head */
+          c.fillStyle = '#000'; c.fillRect(-15, -174 + down, 12, 7); c.fillRect(3, -174 + down, 12, 7); c.fillRect(-3, -172 + down, 6, 2); /* shades */
+          c.fillStyle = '#111'; c.beginPath(); c.arc(0, -180 + down, 17, Math.PI, 0); c.fill();                    /* hair */
+          c.restore();
+        }
+      },
+      'star-wars': {
+        lines: { hello: ['Use the Force.', 'Trust your feelings.'], hit: ['Great shot!', 'The Force is strong.'], lost: ['I have a bad feeling…', 'Patience.'], level: ['Punch it.', 'Stay on target.'], over: ['Do. Or do not.', 'This is not the way.'], win: ['The Force is with you.', 'Never tell me the odds!'], idle: ['Hmm.', 'Feel the Force.', '…'] },
+        draw: function (c, pose, t) {
+          var bob = Math.sin(t / 700) * 2, raise = pose === 'cheer' ? -1.1 : pose === 'sad' ? 0.4 : Math.sin(t / 900) * 0.08, bow = pose === 'win' ? 0.35 : 0;
+          c.save(); c.translate(BW / 2, BH - 20 + bob); c.rotate(bow);
+          c.fillStyle = '#6b4e2e'; c.beginPath(); c.moveTo(-22, -150); c.lineTo(22, -150); c.lineTo(36, 0); c.lineTo(-36, 0); c.closePath(); c.fill(); /* robe */
+          c.fillStyle = '#5a4026'; c.beginPath(); c.moveTo(-26, -150); c.lineTo(26, -150); c.lineTo(20, -190); c.lineTo(-20, -190); c.closePath(); c.fill(); /* hood */
+          c.fillStyle = pose === 'sad' ? '#2a1d10' : '#e8c4a0'; c.beginPath(); c.arc(0, -165, 12, 0, 6.28); c.fill();     /* face, in shadow when sad */
+          c.save(); c.translate(22, -110); c.rotate(raise);                                                            /* saber arm */
+          c.fillStyle = '#6b4e2e'; c.fillRect(-6, 0, 12, 34); c.fillStyle = '#9a9a9a'; c.fillRect(-4, 30, 8, 16);
+          c.strokeStyle = '#7dff7d'; c.lineWidth = 5; c.lineCap = 'round'; c.shadowColor = '#7dff7d'; c.shadowBlur = 14;
+          c.beginPath(); c.moveTo(0, 30); c.lineTo(0, -60); c.stroke(); c.strokeStyle = '#ffffff'; c.lineWidth = 2; c.shadowBlur = 0; c.beginPath(); c.moveTo(0, 30); c.lineTo(0, -60); c.stroke();
+          c.restore(); c.restore();
+        }
+      },
+      'avengers': {
+        lines: { hello: ['I am Iron Man.', 'Suit up.'], hit: ['Nice shot.', 'Boom.', 'That\'s my line.'], lost: ['Ouch.', 'Regroup.'], level: ['Assemble!', 'Bigger.'], over: ['Whatever it takes.', 'We lost.'], win: ['I am Iron Man.', 'Part of the journey is the end.'], idle: ['Jarvis?', 'Genius, billionaire…', '…'] },
+        draw: function (c, pose, t) {
+          var bob = Math.sin(t / 400) * 4, fist = pose === 'cheer' ? -1.4 : pose === 'sad' ? 0.6 : 0.2, pulse = 0.6 + 0.4 * Math.sin(t / 300);
+          c.save(); c.translate(BW / 2, BH - 40 + bob);
+          c.fillStyle = '#ff8a2a'; c.globalAlpha = 0.85; c.beginPath(); c.moveTo(-14, -2); c.lineTo(-8, 26 + Math.random() * 8); c.lineTo(-2, -2); c.fill(); c.beginPath(); c.moveTo(2, -2); c.lineTo(8, 26 + Math.random() * 8); c.lineTo(14, -2); c.fill(); c.globalAlpha = 1; /* jets */
+          c.fillStyle = '#b11313'; c.fillRect(-16, -70, 12, 68); c.fillRect(4, -70, 12, 68);                      /* legs */
+          c.fillStyle = '#e0b33a'; c.fillRect(-16, -14, 12, 12); c.fillRect(4, -14, 12, 12);                       /* boots */
+          c.fillStyle = '#b11313'; c.beginPath(); c.moveTo(-26, -150); c.lineTo(26, -150); c.lineTo(30, -66); c.lineTo(-30, -66); c.closePath(); c.fill(); /* torso */
+          c.fillStyle = '#e0b33a'; c.fillRect(-26, -150, 52, 10); c.fillRect(-8, -120, 16, 44);                  /* gold trim */
+          c.fillStyle = '#9be7ff'; c.shadowColor = '#9be7ff'; c.shadowBlur = 16 * pulse; c.beginPath(); c.arc(0, -128, 7, 0, 6.28); c.fill(); c.shadowBlur = 0; /* reactor */
+          c.save(); c.translate(-30, -140); c.rotate(fist); c.fillStyle = '#b11313'; c.fillRect(-6, 0, 12, 60); c.fillStyle = '#e0b33a'; c.fillRect(-7, 56, 14, 14); c.restore(); /* left arm */
+          c.save(); c.translate(30, -140); c.rotate(-0.2); c.fillStyle = '#b11313'; c.fillRect(-6, 0, 12, 60); c.fillStyle = '#e0b33a'; c.fillRect(-7, 56, 14, 14); c.restore();  /* right arm */
+          c.fillStyle = '#b11313'; c.beginPath(); c.arc(0, -170, 18, 0, 6.28); c.fill();                          /* helmet */
+          c.fillStyle = '#e0b33a'; c.beginPath(); c.moveTo(-12, -180); c.lineTo(12, -180); c.lineTo(10, -156); c.lineTo(-10, -156); c.closePath(); c.fill(); /* faceplate */
+          c.fillStyle = '#dffcff'; c.shadowColor = '#9be7ff'; c.shadowBlur = 8; c.fillRect(-9, -172, 6, 3); c.fillRect(3, -172, 6, 3); c.shadowBlur = 0; /* eyes */
+          c.restore();
+        }
+      }
+    };
+    function companion() { return COMPANIONS[theme()] || COMPANIONS['matrix']; }
+    function say(kind) {
+      var L = companion().lines[kind]; if (!L) return;
+      bubble.textContent = L[Math.floor(Math.random() * L.length)]; bubble.hidden = false; bubble.classList.remove('show'); void bubble.offsetWidth; bubble.classList.add('show');
+      clearTimeout(buddy.bubbleTimer); buddy.bubbleTimer = setTimeout(function () { bubble.hidden = true; }, 2400);
+    }
+    function pose(p, ms) { buddy.pose = p; buddy.until = buddy.t + (ms || 900); }
+    function emit(ev) {   /* game → partner */
+      if (ev === 'hello') { pose('cheer', 1200); say('hello'); }
+      else if (ev === 'hit') { if (Math.random() < 0.35) { pose('cheer', 500); if (Math.random() < 0.5) say('hit'); } }
+      else if (ev === 'lost') { pose('sad', 1500); say('lost'); }
+      else if (ev === 'level') { pose('cheer', 1200); say('level'); }
+      else if (ev === 'over') { pose('sad', 99999); say('over'); }
+      else if (ev === 'win') { pose('win', 99999); say('win'); }
+      else if (ev === 'near') { if (buddy.pose === 'idle') pose('dodge', 400); }
+    }
+    function drawBuddy(dt) {
+      buddy.t += dt * 1000;
+      if (buddy.t > buddy.until && buddy.pose !== 'idle' && buddy.until < 99990) buddy.pose = 'idle';
+      buddy.nextIdle -= dt * 1000; if (buddy.nextIdle <= 0) { buddy.nextIdle = 7000 + Math.random() * 8000; if (buddy.pose === 'idle') say('idle'); }
+      bctx.clearRect(0, 0, BW, BH); companion().draw(bctx, buddy.pose, buddy.t);
+    }
+
+    /* Size the board to the viewport (4:3) and render at device resolution.
+       Drawing code stays in the 480×360 logical space via the transform. */
+    var bc = document.getElementById('arcade-buddy'), bctx = bc.getContext('2d'), BW = bc.width, BH = bc.height;
+    function fit() {
+      if (game.hidden) return;
+      var dpr = Math.min(window.devicePixelRatio || 1, 3), showBuddy = window.innerWidth > 700;
+      var availW = Math.min(window.innerWidth - 48 - (showBuddy ? 170 : 0), 1800), availH = window.innerHeight - 170;
+      var cssW = Math.max(320, Math.min(availW, availH * W / H)), cssH = cssW * H / W;
+      canvas.style.width = cssW + 'px'; canvas.style.height = cssH + 'px';
+      canvas.width = Math.round(cssW * dpr); canvas.height = Math.round(cssH * dpr);
+      ctx.setTransform(canvas.width / W, 0, 0, canvas.height / H, 0, 0);
+      var bs = Math.max(0.9, Math.min(1.8, cssH / 360));
+      bc.style.width = Math.round(BW * bs) + 'px'; bc.style.height = Math.round(BH * bs) + 'px';
+      bc.width = Math.round(BW * bs * dpr); bc.height = Math.round(BH * bs * dpr);
+      bctx.setTransform(bc.width / BW, 0, 0, bc.height / BH, 0, 0);
+      if (S) draw(0);
+    }
+    window.addEventListener('resize', fit);
+    document.addEventListener('fullscreenchange', fit);
 
     /* ---- Breakout ---- */
     var S = null, raf = null, last = 0, keys = {}, stars = [], drops = [];
@@ -106,7 +240,7 @@
       stars = []; for (var i = 0; i < 60; i++) stars.push([Math.random() * W, Math.random() * H, Math.random() * 1.4 + 0.3]);
       drops = []; for (var c = 0; c < W / 14; c++) drops.push(Math.random() * -H);
       window.addEventListener('keydown', onKey); window.addEventListener('keyup', onKeyUp);
-      restart(); last = 0; raf = requestAnimationFrame(tick); canvas.focus();
+      restart(); buddy = { pose: 'idle', until: 0, t: 0, nextIdle: 6000, bubbleTimer: null }; fit(); emit('hello'); last = 0; raf = requestAnimationFrame(tick); canvas.focus();
     }
     function hud() { hudScore.textContent = 'SCORE ' + S.score + '  LVL ' + S.level; hudLives.textContent = new Array(S.lives + 1).join('♥') || '—'; }
 
@@ -129,14 +263,15 @@
           var ox = Math.min(b.x + b.r - k.x, k.x + k.w - (b.x - b.r)), oy = Math.min(b.y + b.r - k.y, k.y + k.h - (b.y - b.r));
           if (ox < oy) b.vx = -b.vx; else b.vy = -b.vy;
           k.hp--; if (k.hp <= 0) { S.bricks.splice(i, 1); S.score += 10 * S.level; } else S.score += 5;
-          beep(600 + Math.random() * 400, 0.05); hud(); break;
+          beep(600 + Math.random() * 400, 0.05); hud(); emit('hit'); break;
         }
       }
       if (b.y > H + b.r) {
         S.lives--; beep(120, 0.25); hud();
-        if (S.lives <= 0) { S.over = true; S.won = false; } else { S.launched = false; b.vx = b.vy = 0; }
+        if (S.lives <= 0) { S.over = true; S.won = false; emit('over'); } else { S.launched = false; b.vx = b.vy = 0; emit('lost'); }
       }
-      if (!S.bricks.length) { S.level++; if (S.level > 5) { S.over = true; S.won = true; } else { var sc = S.score, lv = S.lives; reset(S.level, sc, lv); beep(880, 0.2); } }
+      if (b.x > W - 40 && b.vx > 0) emit('near');
+      if (!S.bricks.length) { S.level++; if (S.level > 5) { S.over = true; S.won = true; emit('win'); } else { var sc = S.score, lv = S.lives; reset(S.level, sc, lv); beep(880, 0.2); emit('level'); } }
     }
 
     function draw(dt) {
@@ -178,7 +313,7 @@
       if (!S.launched && !S.over) ctx.fillText(k.launch, W / 2, H / 2 + 40);
       if (S.over) { ctx.font = 'bold 22px ' + k.font; ctx.fillText(S.won ? k.win : k.over, W / 2, H / 2 - 8); ctx.font = '14px ' + k.font; ctx.fillText('SCORE ' + S.score + ' · SPACE TO PLAY AGAIN', W / 2, H / 2 + 20); }
     }
-    function frame(dt) { if (!S) return; if (!S.over) step(dt); draw(dt); }
+    function frame(dt) { if (!S) return; if (!S.over) step(dt); draw(dt); drawBuddy(dt); }
     function tick(t) {
       raf = requestAnimationFrame(tick);
       if (document.hidden) { last = 0; return; }
@@ -187,6 +322,6 @@
     }
 
     window.site = window.site || {};
-    window.site.arcade = { open: openGate, close: close, armed: armed, frame: function (dt) { frame(dt || 1 / 60); }, state: function () { return S; } };
+    window.site.arcade = { open: openGate, close: close, armed: armed, frame: function (dt) { frame(dt || 1 / 60); }, state: function () { return S; }, buddy: function () { return buddy; }, say: say };
   })();
 </script>
