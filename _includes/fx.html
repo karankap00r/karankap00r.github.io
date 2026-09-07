@@ -32,7 +32,7 @@
 
     document.addEventListener('click', function (e) {
       var cfg = SPARKS[theme()];
-      if (!cfg || e.target.closest('.console, .lightbox, button, input, select, textarea')) return;
+      if (!cfg || e.target.closest('.console, .lightbox, .arcade, button, input, select, textarea')) return;
       if (window.site && window.site.sound) window.site.sound.trigger('click');
       var n = (cfg.ripple || cfg.bolt) ? 1 : 8 + Math.floor(Math.random() * 5);
       for (var i = 0; i < n; i++) {

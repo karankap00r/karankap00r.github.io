@@ -155,6 +155,7 @@
 
     window.site = window.site || {};
     window.site.sound = { enabled: enabled, has: has, toggle: toggle, on: function () { setEnabled(true); start(); paint(); }, off: function () { setEnabled(false); stop(); paint(); }, trigger: trigger,
+      beep: function (f, d) { if (!enabled()) return; ensure(); if (ctx.state === 'suspended') ctx.resume(); tone({ type: 'square', from: f, dur: d || 0.06, gain: 0.06, filter: 3000 }); },
       themes: Object.keys(SCAPES).map(function (k) { return k === 'crt' ? 'crt-*' : k; }) };
   })();
 </script>
