@@ -1,0 +1,220 @@
+<div class="console" id="console" hidden role="region" aria-label="Console">
+  <div class="console-bar">
+    <span>console</span>
+    <button type="button" class="console-close" aria-label="Close console" title="Close (Esc)">×</button>
+  </div>
+  <div class="console-out" id="console-out" aria-live="polite"></div>
+  <form class="console-form" id="console-form" autocomplete="off">
+    <span class="console-prompt" aria-hidden="true">$</span>
+    <input class="console-in" id="console-in" type="text" spellcheck="false" autocapitalize="off" aria-label="Command">
+  </form>
+</div>
+<script>
+  (function () {
+    var el = document.getElementById('console');
+    var out = document.getElementById('console-out');
+    var input = document.getElementById('console-in');
+    var form = document.getElementById('console-form');
+    if (!el || !out || !input || !form) return;
+
+    var PAGES = {
+      {% for item in site.nav %}'{{ item.label | downcase }}': '{{ item.url | relative_url }}'{% unless forloop.last %},{% endunless %}{% endfor %}
+    };
+    var GROUPS = {
+      {% for g in site.theme_groups %}'{{ g[0] }}': [{% for t in g[1] %}'{{ t }}'{% unless forloop.last %}, {% endunless %}{% endfor %}]{% unless forloop.last %},{% endunless %}
+      {% endfor %}
+    };
+    var QUOTES = {
+      'star-wars': 'May the Force be with you.',
+      'avengers': 'I am Iron Man.',
+      'matrix': 'There is no spoon.',
+      'cyberpunk': 'Wake up, samurai. We have a city to burn.',
+      'jetbrains-dark': 'Darcula. Bram Stoker would approve.',
+      '90s-vibes': 'Best viewed in Netscape Navigator 4.0 at 800×600.',
+      'web-rings': 'This site is part of the Personal Homepage WebRing. [prev] [random] [next]',
+      'crt-green': 'HELLO, PROFESSOR FALKEN. SHALL WE PLAY A GAME?'
+    };
+    var KEY = 'kk.console';
+
+    function load() { try { return JSON.parse(sessionStorage.getItem(KEY)) || {}; } catch (e) { return {}; } }
+    function save() { try { sessionStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
+    var state = load();
+    state.lines = state.lines || [];
+    state.history = state.history || [];
+    var hIdx = state.history.length;
+
+    function render() {
+      out.textContent = '';
+      state.lines.forEach(function (l) {
+        var d = document.createElement('div');
+        d.className = 'l-' + l.t;
+        d.textContent = l.s;
+        out.appendChild(d);
+      });
+      out.scrollTop = out.scrollHeight;
+    }
+    function print(s, t) {
+      state.lines.push({ s: s, t: t || 'out' });
+      if (state.lines.length > 200) state.lines.shift();
+      save(); render();
+    }
+    function open() {
+      el.hidden = false; state.open = true; save();
+      if (!state.lines.length) print('karankapoor.dev — type help', 'dim');
+      render(); input.focus();
+    }
+    function close() { el.hidden = true; state.open = false; save(); }
+
+    function setTheme(name) {
+      window.site.setTheme(name);
+      print('theme: ' + name);
+      if (QUOTES[name]) print(QUOTES[name], 'dim');
+    }
+
+    /* Matrix rain, drawn behind the page. Off under reduced motion. */
+    function rain(on) {
+      var c = document.getElementById('rain');
+      if (!on) { if (c) { cancelAnimationFrame(c._raf); c.remove(); } return; }
+      if (c) return;
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) { print('Reduced motion is on; no rain.', 'dim'); return; }
+      c = document.createElement('canvas'); c.id = 'rain'; document.body.appendChild(c);
+      var ctx = c.getContext('2d');
+      function size() { c.width = window.innerWidth; c.height = window.innerHeight; }
+      size(); window.addEventListener('resize', size);
+      var fs = 14, drops = [];
+      var chars = 'ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄ0123456789';
+      function step() {
+        var cols = Math.floor(c.width / fs);
+        while (drops.length < cols) drops.push(Math.random() * -50);
+        // Re-read the page colour every frame so the haze follows theme changes.
+        var m = getComputedStyle(document.body).backgroundColor.match(/\d+/g) || [0, 0, 0];
+        ctx.fillStyle = 'rgba(' + m[0] + ',' + m[1] + ',' + m[2] + ',0.08)';
+        ctx.fillRect(0, 0, c.width, c.height);
+        ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--text-muted').trim() || '#0f0';
+        ctx.font = fs + 'px monospace';
+        for (var i = 0; i < cols; i++) {
+          ctx.fillText(chars[Math.floor(Math.random() * chars.length)], i * fs, drops[i] * fs);
+          if (drops[i] * fs > c.height && Math.random() > 0.975) drops[i] = 0;
+          drops[i]++;
+        }
+        c._raf = requestAnimationFrame(step);
+      }
+      step();
+    }
+
+    var cmds = {
+      help: function () {
+        print('help               this list');
+        print('theme list         themes, by group');
+        print('theme list --all   every theme, flat');
+        print('theme list --trendy | --editor | --retro | --seasonal | --site | --light | --dark');
+        print('theme set <name>   switch theme (saved for next time)');
+        print('go <page>          open a page');
+        print('ls                 list pages');
+        print('whoami');
+        print('clear');
+        print('close              or Esc');
+        print('…and a few things that are not on this list.', 'dim');
+      },
+      theme: function (a) {
+        var api = window.site;
+        if (!a[0] || a[0] === 'list') {
+          var cur = api.getTheme();
+          var mark = function (t) { return t === cur ? '[' + t + ']' : t; };
+          var named = api.themes.filter(function (t) { return t !== 'default' && t !== 'system'; });
+          var flag = (a[1] || '').replace(/^--?/, '');
+          var pad = function (s) { return (s + '          ').slice(0, 10); };
+          if (!flag) {
+            Object.keys(GROUPS).forEach(function (g) { print(pad(g) + GROUPS[g].map(mark).join('  ')); });
+            print(pad('system') + (cur === 'system' ? '[current]' : 'follow the OS') + '   (default is an alias)', 'dim');
+            print('theme list --<group> | --all | --light | --dark', 'dim');
+          } else if (flag === 'all') {
+            print(named.map(mark).join('  '));
+          } else if (flag === 'light' || flag === 'dark') {
+            print(named.filter(function (t) { return api.isDarkTheme(t) === (flag === 'dark'); }).map(mark).join('  '));
+          } else if (GROUPS[flag]) {
+            print(GROUPS[flag].map(mark).join('  '));
+          } else {
+            print('Unknown flag "' + a[1] + '". Groups: ' + Object.keys(GROUPS).join(', ') + ', all, light, dark', 'err');
+          }
+        } else if (a[0] === 'set') {
+          if (api.themes.indexOf(a[1]) < 0) { print('Unknown theme "' + (a[1] || '') + '". Try: theme list', 'err'); return; }
+          setTheme(a[1]);
+        } else {
+          print('Usage: theme list | theme set <name>', 'err');
+        }
+      },
+      go: function (a) {
+        var p = PAGES[a[0]];
+        if (!p) { print('Usage: go <' + Object.keys(PAGES).join('|') + '>', 'err'); return; }
+        print('→ ' + a[0]); location.href = p;
+      },
+      ls: function () {
+        Object.keys(PAGES).forEach(function (k) { print((k + '            ').slice(0, 12) + PAGES[k]); });
+      },
+      whoami: function () { print('Karan Kapoor — Staff Software Engineer, Zepto. Payments, lending, quick commerce.'); },
+      clear: function () { state.lines = []; save(); render(); },
+      close: close,
+      exit: close,
+
+      /* ---- not on the help list ---- */
+      crawl: function () {
+        ['A long time ago in a galaxy far, far away....', '',
+         'EPISODE IX', 'A NEW SITE', '',
+         'It is a period of side projects. Rebel engineers, striking from a hidden repo,',
+         'have won their first victory against the placeholder content.', '',
+         'Pursued by the sinister Tech Debt, Karan races home aboard his laptop,',
+         'custodian of the numbers that are public....'
+        ].forEach(function (l) { print(l, 'dim'); });
+        if (window.site.getTheme() !== 'star-wars') print('(theme set star-wars looks better)', 'dim');
+      },
+      force: function () { print("These aren't the droids you're looking for."); },
+      snap: function () {
+        document.body.classList.add('snapped');
+        print('*snap*'); print('Perfectly balanced, as all things should be.', 'dim');
+      },
+      assemble: function () { document.body.classList.remove('snapped'); print('Avengers, assemble.'); },
+      redpill: function () { setTheme('matrix'); rain(true); print('Follow the white rabbit.', 'dim'); },
+      bluepill: function () { rain(false); setTheme('system'); print('You wake up in your bed and believe whatever you want to believe.', 'dim'); },
+      rain: function (a) { rain(a[0] !== 'off'); print(a[0] === 'off' ? 'rain: off' : 'rain: on  (rain off to stop)'); },
+      neo: function () { print('Wake up, Neo…'); print('The Matrix has you.', 'dim'); print('Follow the white rabbit.', 'dim'); },
+      sudo: function () { print('karan is not in the sudoers file. This incident will be reported.', 'err'); },
+      hello: function () { print('Hello, world.'); },
+      coffee: function () { print('HTTP 418: I\'m a teapot.', 'err'); }
+    };
+
+    function run(line) {
+      var parts = line.trim().split(/\s+/);
+      var c = parts[0];
+      if (!c) return;
+      print('$ ' + line, 'cmd');
+      state.history.push(line);
+      if (state.history.length > 50) state.history.shift();
+      hIdx = state.history.length;
+      if (cmds[c]) cmds[c](parts.slice(1)); else print('Bad command "' + c + '". Try help.', 'err');
+      save();
+    }
+
+    form.addEventListener('submit', function (e) { e.preventDefault(); run(input.value); input.value = ''; });
+    input.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowUp') { if (hIdx > 0) { hIdx--; input.value = state.history[hIdx] || ''; } e.preventDefault(); }
+      else if (e.key === 'ArrowDown') { if (hIdx < state.history.length) { hIdx++; input.value = state.history[hIdx] || ''; } e.preventDefault(); }
+      else if (e.key === 'Escape') { close(); }
+    });
+    el.querySelector('.console-close').addEventListener('click', close);
+    document.querySelectorAll('[data-console-toggle]').forEach(function (b) {
+      b.addEventListener('click', function () { if (el.hidden) open(); else close(); });
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      var t = e.target;
+      var typing = t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable);
+      if (e.key === '`' && !typing) { e.preventDefault(); if (el.hidden) open(); else close(); }
+      else if (e.key === 'Escape' && !el.hidden) { close(); }
+    });
+
+    if (state.open) { el.hidden = false; render(); }
+    window.site = window.site || {};
+    window.site.console = { open: open, close: close, print: print };
+  })();
+</script>
