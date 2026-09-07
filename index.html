@@ -3,7 +3,7 @@ layout: default
 ---
 
 <section class="hero">
-  <h1 class="hero-name">{{ site.title }}</h1>
+  <h1 class="hero-name">{{ site.hero | default: site.title }}</h1>
   <p class="hero-bio">I'm a Staff Software Engineer at Zepto. I've spent nine years in payments, lending, and quick commerce — distributed systems, cost, and now AI. This site is where my side projects and writing go; the work history is on the <a href="{{ '/career/' | relative_url }}">career page</a>.</p>
 </section>
 
