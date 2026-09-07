@@ -117,7 +117,7 @@ whoami: "Karan Kapoor — Staff Software Engineer at Zepto. I lead product and i
 now:
   - "Building a self-healing catalog at Zepto: catalog rules enforced with GenAI."
   - "Driving standardisation across Zepto's cache platform."
-  - "Leading SDLC productivity across Zepto: centralised PR reviews, feedback loops, Skills Gateway, and MCP Gateway."
+  - "Working on SDLC productivity initiatives such as centralised PR reviews, a feedback loop for self-improving agents, Skills Studio, and MCP Gateway."
 
 # How many recent items to preview on the homepage.
 home:
