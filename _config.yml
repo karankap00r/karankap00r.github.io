@@ -65,12 +65,16 @@ themes_light:
   - gruvbox-light
   - catppuccin-latte
   - jetbrains-light
+  - rain
+  - snow
+  - sunshine
 themes_dark:
   - jetbrains-dark
   - star-wars
   - avengers
   - matrix
   - cyberpunk
+  - storm
   - dark
   - night-owl
   - crt-red
@@ -92,15 +96,28 @@ theme_groups:
   editor:   [solarized-light, solarized-dark, dracula, nord, gruvbox-dark, gruvbox-light, catppuccin-mocha, catppuccin-latte, tokyo-night]
   retro:    [web-rings, 90s-vibes, crt-red, crt-amber, crt-green, crt-mono]
   seasonal: [valentines-day, st-patricks-day]
+  weather:  [rain, snow, sunshine, storm]
 
 # Web fonts a theme needs. Loaded only when that theme is set.
 theme_fonts:
+  rain: "https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap"
+  snow: "https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;600&display=swap"
+  sunshine: "https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap"
+  storm: "https://fonts.googleapis.com/css2?family=Oswald:wght@400;500&display=swap"
   star-wars: "https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Exo+2:wght@400;500&display=swap"
   cyberpunk: "https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Rajdhani:wght@500;600&display=swap"
   avengers: "https://fonts.googleapis.com/css2?family=Anton&family=Barlow:wght@400;500&display=swap"
   matrix: "https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap"
   jetbrains-dark: "https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap"
   jetbrains-light: "https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap"
+
+# One place for "who I am / what I'm doing now". Rendered on the homepage
+# (Currently) and by the console's `whoami`. Edit here, both update.
+whoami: "Karan Kapoor — Staff Software Engineer at Zepto. I lead product and infrastructure engineering teams, and I put as much care into growing engineers and a healthy engineering culture as into the systems themselves."
+now:
+  - "Building a self-healing catalog at Zepto: catalog rules enforced with GenAI."
+  - "Driving standardisation across Zepto's cache platform."
+  - "Leading SDLC productivity across Zepto: centralised PR reviews, feedback loops, Skills Gateway, and MCP Gateway."
 
 # How many recent items to preview on the homepage.
 home:

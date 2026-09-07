@@ -4,15 +4,14 @@ layout: default
 
 <section class="hero">
   <h1 class="hero-name">{{ site.title }}</h1>
-  <p class="hero-bio">Staff Software Engineer at Zepto. Nine years in payments, lending, and quick commerce — distributed systems, cost, and now AI. This site is where the side projects and writing go. The work history is on the <a href="{{ '/career/' | relative_url }}">career page</a>.</p>
+  <p class="hero-bio">I'm a Staff Software Engineer at Zepto. I've spent nine years in payments, lending, and quick commerce — distributed systems, cost, and now AI. This site is where my side projects and writing go; the work history is on the <a href="{{ '/career/' | relative_url }}">career page</a>.</p>
 </section>
 
 <section class="now">
   <h2 class="section-label">Currently</h2>
   <ul class="now-list">
-    <li>Building a self-healing catalog at Zepto: catalog rules enforced with GenAI.</li>
-    <li>Driving standardisation across Zepto's cache platform.</li>
-    <li>Leading SDLC productivity across Zepto: centralised PR reviews, feedback loops, Skills Gateway, and MCP Gateway.</li>
+    {% for item in site.now %}<li>{{ item }}</li>
+    {% endfor %}
   </ul>
 </section>
 
