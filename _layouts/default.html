@@ -118,6 +118,7 @@
           if (window.__ensureFont) window.__ensureFont(next);
         }
         applyScheme();
+        document.dispatchEvent(new CustomEvent('themechange', { detail: getTheme() }));
       }
       // Light/dark stays inside the current theme: swap to its twin if it has
       // one, otherwise flip its luminance in place. The site default toggles
@@ -171,5 +172,7 @@
   {% include pets.html %}
   {% include console.html %}
   {% include lightbox.html %}
+  {% include fx.html %}
+  {% include sound.html %}
 </body>
 </html>

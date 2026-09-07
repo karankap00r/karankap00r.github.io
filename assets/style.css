@@ -387,6 +387,141 @@
   #ambient::before, #ambient::after, .amb-new { animation: none !important; }
 }
 
+/* =================================================================
+   Theme FX — entrances, hovers, heading effects, overlays, click sparks.
+   Each theme picks an entrance via --enter and a nav-underline colour via
+   --fx-nav; the rest are targeted rules. All motion sits under
+   prefers-reduced-motion: no-preference.
+   ================================================================= */
+
+#fx { position: fixed; inset: 0; z-index: 7; pointer-events: none; overflow: hidden; }
+#fx::before, #fx::after { content: none; position: absolute; }
+#sparks { position: fixed; inset: 0; z-index: 55; pointer-events: none; overflow: hidden; }
+.spark { position: absolute; transform: translate(-50%, -50%); line-height: 1; will-change: transform, opacity; }
+.spark-ripple { width: 10px; height: 10px; border: 2px solid; border-radius: 50%; }
+.spark-bolt { width: 28px; height: 3px; border-radius: 2px; box-shadow: 0 0 8px currentColor; }
+
+/* Theme switches crossfade instead of snapping. */
+body, main, .site-header, .site-footer, .console, .site-nav a, .theme-toggle, .console-toggle {
+  transition: background-color 0.45s ease, color 0.45s ease, border-color 0.45s ease;
+}
+
+/* Nav hover: a line that sweeps in, coloured per theme (glows where --fx-nav-glow is set). */
+.site-nav a { position: relative; }
+.site-nav a::after {
+  content: ""; position: absolute; left: 0; right: 100%; bottom: -4px; height: 1px;
+  background: var(--fx-nav, transparent); box-shadow: 0 0 8px var(--fx-nav-glow, transparent);
+  transition: right 0.25s ease;
+}
+.site-nav a:hover::after { right: 0; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .spark { animation: spark-fly 0.9s cubic-bezier(0.2, 0.7, 0.3, 1) forwards; }
+  .spark-ripple { animation: spark-ripple 0.7s ease-out forwards; }
+  .spark-bolt { animation: spark-bolt 0.45s linear forwards; }
+
+  /* Entrance: sections arrive one after another. */
+  main > * { animation: var(--enter, none) 0.75s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+  main > :nth-child(2) { animation-delay: 90ms; }
+  main > :nth-child(3) { animation-delay: 180ms; }
+  main > :nth-child(4) { animation-delay: 270ms; }
+  main > :nth-child(5) { animation-delay: 360ms; }
+  main > :nth-child(n+6) { animation-delay: 450ms; }
+
+  /* Heading and overlay effects. */
+  :root[data-theme="star-wars"] .hero-name, :root[data-theme="star-wars"] .page-title { animation: fx-glow-yellow 4s ease-in-out infinite alternate; }
+  :root[data-theme="avengers"] h1 {
+    background-image:
+      linear-gradient(115deg, transparent 42%, rgba(255, 255, 255, 0.75) 50%, transparent 58%),
+      linear-gradient(180deg, #f7f7f7 0%, #c9ccd3 45%, #8d919b 55%, #e6e8ec 100%);
+    background-size: 260% 100%, 100% 100%; background-position: 120% 0, 0 0;
+    animation: fx-shimmer 7s linear infinite;
+  }
+  :root[data-theme="cyberpunk"] h1 { animation: fx-neon 3.2s infinite; }
+  :root[data-theme="cyberpunk"] #fx::after {
+    content: ""; left: 0; right: 0; height: 6px; top: 20%;
+    background: linear-gradient(90deg, rgba(0, 229, 255, 0.35), rgba(255, 42, 109, 0.35));
+    mix-blend-mode: screen; animation: fx-slice 6s steps(1, end) infinite;
+  }
+  :root[data-theme="matrix"] .hero-name, :root[data-theme="matrix"] .page-title { animation: fx-glow-green 3s ease-in-out infinite alternate; }
+  :root[data-theme^="crt-"] main { text-shadow: 0 0 2px currentColor; }
+  :root[data-theme^="crt-"] #fx::before {
+    content: ""; left: 0; right: 0; height: 140px; top: -140px;
+    background: linear-gradient(to bottom, transparent, rgba(255, 255, 255, 0.07), transparent);
+    animation: fx-roll 9s linear infinite;
+  }
+  :root[data-theme="storm"] #fx::before {
+    content: ""; inset: 0; background: rgba(200, 214, 255, 0.9);
+    animation: fx-lightning 13s linear infinite;
+  }
+  :root[data-theme="web-rings"] #fx::before {
+    content: ""; left: 0; right: 0; top: 0; height: 6px;
+    background: repeating-linear-gradient(45deg, #ffcc00 0 12px, #111 12px 24px); background-size: 34px 100%;
+    animation: fx-stripes 0.8s linear infinite;
+  }
+  :root[data-theme="90s-vibes"] h1 { animation: fx-rainbow 5s linear infinite; }
+  :root[data-theme="valentines-day"] h1 { animation: fx-glow-pink 3.5s ease-in-out infinite alternate; }
+  :root[data-theme="sunshine"] h1 { animation: fx-glow-warm 4s ease-in-out infinite alternate; }
+  :root[data-theme="matrix"] .page-title::after, :root[data-theme="matrix"] .hero-name::after {
+    content: "▍"; margin-left: 0.12em; color: var(--accent); animation: fx-caret 1s steps(2, start) infinite;
+  }
+}
+
+/* Entrance and nav colour per theme. Quiet themes (site default, paper,
+   night-owl, omaha, the editor palettes) get none of this — just the crossfade. */
+:root { --enter: none; }
+:root[data-theme="web-rings"] { --fx-nav: #0000ee; }
+:root[data-theme^="crt-"] { --enter: fx-flicker; --fx-nav: currentColor; --fx-nav-glow: currentColor; }
+:root[data-theme="90s-vibes"] { --enter: fx-pop; --fx-nav: #ffff00; }
+:root[data-theme="valentines-day"] { --enter: fx-rise; --fx-nav: #ff1f7a; }
+:root[data-theme="st-patricks-day"] { --enter: fx-rise; --fx-nav: #1e7a3c; }
+:root[data-theme="star-wars"] { --enter: fx-fade; --fx-nav: #4bd5ff; --fx-nav-glow: rgba(75, 213, 255, 0.9); }
+:root[data-theme="avengers"] { --enter: fx-slide; --fx-nav: #e2231a; --fx-nav-glow: rgba(226, 35, 26, 0.5); }
+:root[data-theme="matrix"] { --enter: fx-fade; --fx-nav: #00ff41; --fx-nav-glow: rgba(0, 255, 65, 0.7); }
+:root[data-theme="cyberpunk"] { --enter: fx-glitch-in; --fx-nav: #00e5ff; --fx-nav-glow: rgba(0, 229, 255, 0.8); }
+:root[data-theme="rain"] { --enter: fx-drop; --fx-nav: #2e6f95; }
+:root[data-theme="snow"] { --enter: fx-drop; --fx-nav: #3b82c4; }
+:root[data-theme="sunshine"] { --enter: fx-rise; --fx-nav: #ff9f1c; --fx-nav-glow: rgba(255, 159, 28, 0.5); }
+:root[data-theme="storm"] { --enter: fx-flicker; --fx-nav: #b8c9ff; --fx-nav-glow: rgba(184, 201, 255, 0.6); }
+
+:root[data-theme="st-patricks-day"] #ambient::before {   /* a rainbow, low in the left gutter */
+  content: ""; top: auto; bottom: -60px; height: 220px; width: var(--gutter); opacity: 0.35;
+  background: radial-gradient(circle at 50% 100%, transparent 50%, #e63946 50% 55%, #f77f00 55% 60%, #fcbf49 60% 65%, #2a9d8f 65% 70%, #4361ee 70% 75%, #7209b7 75% 80%, transparent 80%);
+}
+
+@keyframes spark-fly { to { transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) rotate(var(--r)); opacity: 0; } }
+@keyframes spark-ripple { to { width: 90px; height: 90px; opacity: 0; } }
+@keyframes spark-bolt { from { transform: translate(-50%, -50%) rotate(var(--r)); } to { transform: translate(calc(-50% + var(--dx) * 3), calc(-50% + var(--dy) * 3)) rotate(var(--r)); opacity: 0; } }
+@keyframes fx-fade { from { opacity: 0; } }
+@keyframes fx-rise { from { opacity: 0; transform: translateY(14px); } }
+@keyframes fx-drop { from { opacity: 0; transform: translateY(-22px); } }
+@keyframes fx-slide { from { opacity: 0; transform: translateX(-28px); } }
+@keyframes fx-unfold { from { opacity: 0; transform: perspective(800px) rotateX(-14deg); } }
+@keyframes fx-pop { 0% { opacity: 0; transform: scale(0.94); } 70% { transform: scale(1.015); } 100% { transform: none; } }
+@keyframes fx-blur { from { opacity: 0; filter: blur(8px); } to { filter: blur(0); } }
+@keyframes fx-flicker { 0% { opacity: 0; } 12% { opacity: 0.7; } 22% { opacity: 0.15; } 36% { opacity: 0.9; } 50% { opacity: 0.45; } 66% { opacity: 1; } 80% { opacity: 0.75; } 100% { opacity: 1; } }
+@keyframes fx-glitch-in { 0% { opacity: 0; transform: translateX(-8px) skewX(-8deg); } 30% { opacity: 1; transform: translateX(5px) skewX(6deg); } 60% { transform: translateX(-2px) skewX(-2deg); } 100% { transform: none; } }
+@keyframes fx-caret { to { visibility: hidden; } }
+@keyframes fx-shimmer { to { background-position: -160% 0, 0 0; } }
+@keyframes fx-roll { to { top: 100%; } }
+@keyframes fx-stripes { to { background-position: 34px 0; } }
+@keyframes fx-rainbow { 0% { color: #ffffff; } 25% { color: #ffff00; } 50% { color: #ff2fd6; } 75% { color: #00ffff; } 100% { color: #ffffff; } }
+@keyframes fx-lightning { 0%, 91%, 93.5%, 100% { opacity: 0; } 92% { opacity: 0.55; } 93% { opacity: 0.2; } }
+@keyframes fx-slice { 0%, 100% { opacity: 0; } 41% { opacity: 0; top: 63%; } 42% { opacity: 1; } 44% { opacity: 0; } 77% { top: 28%; opacity: 0; } 78% { opacity: 1; } 79% { opacity: 0; } }
+@keyframes fx-neon {
+  0%, 100% { text-shadow: 0 0 12px rgba(255, 42, 109, 0.6); }
+  8%  { text-shadow: 0 0 4px rgba(255, 42, 109, 0.3); }
+  9%  { text-shadow: 0 0 14px rgba(255, 42, 109, 0.75), 2px 0 0 rgba(0, 229, 255, 0.7), -2px 0 0 rgba(255, 42, 109, 0.7); }
+  10% { text-shadow: 0 0 12px rgba(255, 42, 109, 0.6); }
+  54% { text-shadow: 0 0 6px rgba(255, 42, 109, 0.35); }
+}
+@keyframes fx-glow-yellow { from { text-shadow: 0 0 12px rgba(255, 232, 31, 0.25); } to { text-shadow: 0 0 26px rgba(255, 232, 31, 0.6); } }
+@keyframes fx-glow-green  { from { text-shadow: 0 0 6px rgba(0, 255, 65, 0.35); }   to { text-shadow: 0 0 18px rgba(0, 255, 65, 0.75); } }
+@keyframes fx-glow-pink   { from { text-shadow: 0 0 0 rgba(255, 31, 122, 0); }      to { text-shadow: 0 0 16px rgba(255, 31, 122, 0.45); } }
+@keyframes fx-glow-warm   { from { text-shadow: 0 0 0 rgba(255, 159, 28, 0); }      to { text-shadow: 0 0 18px rgba(255, 159, 28, 0.5); } }
+@keyframes fx-glow-blue   { from { text-shadow: 0 0 0 rgba(122, 162, 247, 0); }     to { text-shadow: 0 0 16px rgba(122, 162, 247, 0.55); } }
+@keyframes fx-glow-purple { from { text-shadow: 0 0 0 rgba(189, 147, 249, 0); }     to { text-shadow: 0 0 16px rgba(189, 147, 249, 0.55); } }
+
 /* Easter eggs. */
 body.snapped main li:nth-child(even), body.snapped main p:nth-of-type(even) {
   opacity: 0; filter: blur(3px); transition: opacity 2.5s ease, filter 2.5s ease;
@@ -586,6 +721,8 @@ a:hover {
   transition: color 120ms ease;
 }
 .console-toggle:hover { color: var(--text); }
+.sound-toggle[aria-pressed="true"] { color: var(--text); }
+.sound-toggle[hidden] { display: none; }
 .console-toggle:focus-visible { outline: 1px solid var(--text-muted); outline-offset: 3px; }
 
 /* =================================================================

@@ -1,6 +1,7 @@
 <header class="site-header">
   <a href="{{ '/' | relative_url }}" class="site-brand">{{ site.title }}</a>
   <div class="site-utils">
+    <button class="console-toggle sound-toggle" type="button" data-sound-toggle hidden aria-pressed="false" title="Unmute (m)"><span class="key" aria-hidden="true">m</span><span class="sound-state">sound off</span></button>
     <button class="console-toggle" type="button" data-console-toggle title="Open console (`)"><span class="key" aria-hidden="true">`</span>console</button>
     <button class="theme-toggle" type="button" aria-label="Toggle light / dark theme" title="Toggle theme (t) · follow system (0)"><span class="key" aria-hidden="true">t</span>
       <svg class="icon-sun" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">

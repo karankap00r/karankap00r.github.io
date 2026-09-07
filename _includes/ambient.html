@@ -120,7 +120,11 @@
         var k = canvas(), g = gutters(), st = store(key), S = st.load() || { st: [], t: 0 };
         var col = cssVar('--text') || '#fff';
         var hyper = null, nextJump = o.hyper ? 15000 + Math.random() * 20000 : Infinity;
-        function jump() { if (!reduce && !hyper) hyper = { t: 0, dur: 1800 }; }
+        function jump() {
+          if (reduce || hyper) return;
+          hyper = { t: 0, dur: 1800 };
+          if (window.site && window.site.sound) window.site.sound.trigger('jump');
+        }
         while (S.st.length < o.n) S.st.push({ x: randIn(g), y: g.top + Math.random() * (g.bottom - g.top),
           r: 0.5 + Math.random() * 1.2, ph: Math.random() * 6.28, sp: 0.5 + Math.random() });
         function draw(dt) {
@@ -230,6 +234,7 @@
           var pts = [[x, g.top]], y = g.top, floor = g.top + (g.bottom - g.top) * 0.6;
           while (y < floor) { y += 18 + Math.random() * 30; x += (Math.random() - 0.5) * 36; pts.push([x, y]); }
           bolt = { pts: pts, ttl: 240 }; flash = 1;
+          if (window.site && window.site.sound) window.site.sound.trigger('thunder');
         }
         var stop = loop(function (dt) {
           S.t += dt; S.next -= dt;

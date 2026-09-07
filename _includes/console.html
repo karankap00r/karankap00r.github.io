@@ -215,6 +215,7 @@
         print('theme list --trendy | --editor | --retro | --seasonal | --weather | --site | --light | --dark');
         print('theme set <name>           switch theme (saved for next time)');
         print('pet <cat|dog|duck|off>     toggle a pet in the margins');
+        print('sound on|off               soundscape for the louder themes (also: m)');
         print('dock <float|bottom|top|left|right>   pin this window; content reflows');
         print('size <px>                  window size · expand   toggle big/small');
         print('go <page>                  open a page');
@@ -268,6 +269,13 @@
         var on = P.toggle(k);
         print(on ? k + ' adopted. Look ' + (P.list().length % 2 ? 'left' : 'right') + '.' : k + ' went home.');
         if (on && !window.site.gutters()) print('(the window is too narrow for the margins right now)', 'dim');
+      },
+      sound: function (a) {
+        var S = window.site.sound;
+        if (!S) { print('No audio here.', 'err'); return; }
+        if (a[0] === 'on') { S.on(); print(S.has() ? 'sound: on' : 'sound: on — this theme is silent; try ' + S.themes.join(', ')); }
+        else if (a[0] === 'off') { S.off(); print('sound: off'); }
+        else { print('sound: ' + (S.enabled() ? 'on' : 'off') + (S.has() ? '' : ' (this theme has no soundscape)')); print('themes with sound: ' + S.themes.join(', '), 'dim'); }
       },
       dock: function (a) {
         if (!a[0]) { print('dock: ' + U.dock + (effectiveDock() !== U.dock ? ' (shown as ' + effectiveDock() + ' at this width)' : '')); print('Usage: dock <' + DOCKS.join('|') + '>', 'dim'); return; }
