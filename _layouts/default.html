@@ -16,17 +16,44 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="{{ '/assets/style.css' | relative_url }}">
+  <link rel="stylesheet" href="{{ '/assets/style.css' | relative_url }}?v={{ site.time | date: '%s' }}">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%23f5efe4'/%3E%3Ctext x='2' y='13' font-family='Georgia,serif' font-size='13' fill='%232a241e'%3EK%3C/text%3E%3C/svg%3E">
 
   <!-- Theme restore — runs synchronously before paint to avoid flash. -->
   <script>
     (function () {
       try {
+        var root = document.documentElement;
         var saved = localStorage.getItem('theme');
-        if (saved === 'light' || saved === 'dark') {
-          document.documentElement.setAttribute('data-theme', saved);
+        // ?theme=<name> in the URL picks a theme (and keeps it), so links can carry one.
+        var fromUrl = new URLSearchParams(location.search).get('theme');
+        if (fromUrl && /^[a-z0-9-]+$/.test(fromUrl)) {
+          saved = fromUrl;
+          try { localStorage.removeItem('theme.flip'); if (saved === 'system' || saved === 'default') localStorage.removeItem('theme'); else localStorage.setItem('theme', saved); } catch (e) {}
         }
+        if (saved && saved !== 'system' && saved !== 'default') root.setAttribute('data-theme', saved);
+        // Some themes bring their own web font; load it only when that theme is on.
+        var FONTS = {
+          {% for f in site.theme_fonts %}'{{ f[0] }}': '{{ f[1] }}'{% unless forloop.last %},{% endunless %}{% endfor %}
+        };
+        window.__ensureFont = function (t) {
+          var u = FONTS[t];
+          if (!u || document.querySelector('link[data-theme-font="' + t + '"]')) return;
+          var l = document.createElement('link');
+          l.rel = 'stylesheet'; l.href = u; l.setAttribute('data-theme-font', t);
+          document.head.appendChild(l);
+        };
+        if (saved) window.__ensureFont(saved);
+        var DARK = /^({{ site.themes_dark | join: "|" }})$/;
+        var dark = saved && saved !== 'system'
+          ? DARK.test(saved)
+          : window.matchMedia('(prefers-color-scheme: dark)').matches;
+        // A theme without a light/dark twin can be flipped in place (see toggle()).
+        var flip = false;
+        try { flip = !!localStorage.getItem('theme.flip') && !!saved && saved !== 'system' && saved !== 'default'; } catch (e) {}
+        if (flip) { root.setAttribute('data-flip', '1'); dark = !dark; }
+        root.setAttribute('data-scheme', dark ? 'dark' : 'light');
+        root.style.colorScheme = dark ? 'dark' : 'light';
       } catch (e) { /* private mode etc. */ }
     })();
   </script>
@@ -38,23 +65,111 @@
   </main>
   {% include footer.html %}
 
-  <!-- Theme toggle behavior. -->
+  <!-- Theme + keyboard. "t" toggles light/dark, "0" follows the system,
+       single letters jump to pages (see nav hints), "`" opens the console. -->
   <script>
     (function () {
-      var btn = document.querySelector('.theme-toggle');
-      if (!btn) return;
-      btn.addEventListener('click', function () {
-        var root = document.documentElement;
-        var current = root.getAttribute('data-theme');
-        if (!current) {
-          var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-          current = prefersDark ? 'dark' : 'light';
+      var root = document.documentElement;
+      // "default" and "system" both mean: follow the OS. The rest are listed in _config.yml
+      // and each has a palette block in style.css.
+      var THEMES = ['default', 'system'{% for t in site.themes_light %}, '{{ t }}'{% endfor %}{% for t in site.themes_dark %}, '{{ t }}'{% endfor %}];
+      var DARK = /^({{ site.themes_dark | join: "|" }})$/;
+      var PAGES = {
+        {% for item in site.nav %}'{{ item.key }}': '{{ item.url | relative_url }}'{% unless forloop.last %},{% endunless %}{% endfor %}
+      };
+
+      // Themes that come as a light/dark pair. Toggling swaps within the pair.
+      var PAIRS = {
+        'light': 'dark', 'dark': 'light',
+        'solarized-light': 'solarized-dark', 'solarized-dark': 'solarized-light',
+        'gruvbox-light': 'gruvbox-dark', 'gruvbox-dark': 'gruvbox-light',
+        'catppuccin-latte': 'catppuccin-mocha', 'catppuccin-mocha': 'catppuccin-latte',
+        'jetbrains-light': 'jetbrains-dark', 'jetbrains-dark': 'jetbrains-light'
+      };
+
+      function getTheme() { return root.getAttribute('data-theme') || 'system'; }
+      function flipped() { return root.hasAttribute('data-flip'); }
+      function baseDark() {
+        var t = getTheme();
+        if (t !== 'system') return DARK.test(t);
+        return window.matchMedia('(prefers-color-scheme: dark)').matches;
+      }
+      function isDark() { return flipped() ? !baseDark() : baseDark(); }
+      function applyScheme() {
+        var dark = isDark();
+        root.setAttribute('data-scheme', dark ? 'dark' : 'light');
+        root.style.colorScheme = dark ? 'dark' : 'light';
+        if (window.site && window.site.ambient) window.site.ambient.apply(getTheme());
+      }
+      function setFlip(on) {
+        if (on) root.setAttribute('data-flip', '1'); else root.removeAttribute('data-flip');
+        try { if (on) localStorage.setItem('theme.flip', '1'); else localStorage.removeItem('theme.flip'); } catch (e) {}
+        applyScheme();
+      }
+      function setTheme(next) {
+        root.removeAttribute('data-flip');
+        try { localStorage.removeItem('theme.flip'); } catch (e) {}
+        if (!next || next === 'system' || next === 'default') {
+          root.removeAttribute('data-theme');
+          try { localStorage.removeItem('theme'); } catch (e) {}
+        } else {
+          root.setAttribute('data-theme', next);
+          try { localStorage.setItem('theme', next); } catch (e) {}
+          if (window.__ensureFont) window.__ensureFont(next);
         }
-        var next = current === 'dark' ? 'light' : 'dark';
-        root.setAttribute('data-theme', next);
-        try { localStorage.setItem('theme', next); } catch (e) {}
+        applyScheme();
+      }
+      // Light/dark stays inside the current theme: swap to its twin if it has
+      // one, otherwise flip its luminance in place. The site default toggles
+      // between light and dark as before.
+      function toggle() {
+        var t = getTheme();
+        if (t === 'system') { setTheme(baseDark() ? 'light' : 'dark'); return; }
+        if (PAIRS[t]) { setTheme(PAIRS[t]); return; }
+        setFlip(!flipped());
+      }
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', applyScheme);
+
+      window.site = Object.assign(window.site || {}, {
+        themes: THEMES, getTheme: getTheme, setTheme: setTheme, toggleTheme: toggle,
+        flipped: flipped, setFlip: setFlip, pairs: PAIRS,
+        isDarkTheme: function (t) { return DARK.test(t); }
+      });
+
+      var btn = document.querySelector('.theme-toggle');
+      if (btn) btn.addEventListener('click', toggle);
+
+      // ↑↑↓↓←→←→BA
+      var KONAMI = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
+      var kpos = 0;
+
+      document.addEventListener('keydown', function (e) {
+        if (e.metaKey || e.ctrlKey || e.altKey || e.shiftKey) return;
+        var t = e.target;
+        if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return;
+        var k = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+
+        kpos = (k === KONAMI[kpos]) ? kpos + 1 : (k === KONAMI[0] ? 1 : 0);
+        if (kpos === KONAMI.length) {
+          kpos = 0; e.preventDefault();
+          setTheme('90s-vibes');
+          if (window.site.console) {
+            window.site.console.open();
+            window.site.console.print('↑↑↓↓←→←→BA — 30 lives. theme: 90s-vibes', 'dim');
+          }
+          return;
+        }
+        if (kpos > 0 && KONAMI[kpos - 1].length === 1) return; // mid-sequence "b"/"a": don't navigate
+
+        if (k === 't') { toggle(); e.preventDefault(); }
+        else if (k === '0') { setTheme('system'); e.preventDefault(); }
+        else if (PAGES[k]) { location.href = PAGES[k]; e.preventDefault(); }
       });
     })();
   </script>
+  {% include ambient.html %}
+  {% include pets.html %}
+  {% include console.html %}
+  {% include lightbox.html %}
 </body>
 </html>

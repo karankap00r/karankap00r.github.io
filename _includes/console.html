@@ -1,0 +1,410 @@
+<div class="console" id="console" hidden role="region" aria-label="Console" data-dock="float">
+  <div class="console-grip" aria-hidden="true"></div>
+  <div class="console-bar">
+    <span class="console-bar-title">console<small id="console-mode"></small></span>
+    <button type="button" class="console-btn" data-console-dock title="Cycle dock: float → bottom → right → top → left">dock</button>
+    <button type="button" class="console-btn" data-console-expand title="Expand / restore">expand</button>
+    <button type="button" class="console-close" aria-label="Close console" title="Close (Esc)">×</button>
+  </div>
+  <div class="console-out" id="console-out" aria-live="polite"></div>
+  <form class="console-form" id="console-form" autocomplete="off">
+    <span class="console-prompt" aria-hidden="true">$</span>
+    <input class="console-in" id="console-in" type="text" spellcheck="false" autocapitalize="off" aria-label="Command">
+  </form>
+</div>
+<script>
+  (function () {
+    var el = document.getElementById('console');
+    var out = document.getElementById('console-out');
+    var input = document.getElementById('console-in');
+    var form = document.getElementById('console-form');
+    var modeEl = document.getElementById('console-mode');
+    if (!el || !out || !input || !form) return;
+
+    var PAGES = {
+      {% for item in site.nav %}'{{ item.label | downcase }}': '{{ item.url | relative_url }}'{% unless forloop.last %},{% endunless %}{% endfor %}
+    };
+    var GROUPS = {
+      {% for g in site.theme_groups %}'{{ g[0] }}': [{% for t in g[1] %}'{{ t }}'{% unless forloop.last %}, {% endunless %}{% endfor %}]{% unless forloop.last %},{% endunless %}
+      {% endfor %}
+    };
+    var QUOTES = {
+      'star-wars': 'May the Force be with you.',
+      'avengers': 'I am Iron Man.',
+      'matrix': 'There is no spoon.',
+      'cyberpunk': 'Wake up, samurai. We have a city to burn.',
+      'jetbrains-dark': 'Darcula. Bram Stoker would approve.',
+      '90s-vibes': 'Best viewed in Netscape Navigator 4.0 at 800×600.',
+      'web-rings': 'This site is part of the Personal Homepage WebRing. [prev] [random] [next]',
+      'crt-green': 'HELLO, PROFESSOR FALKEN. SHALL WE PLAY A GAME?',
+      'rain': 'It always rains on the day you forget the umbrella. (try: umbrella)',
+      'snow': 'Let it snow. (try: snowman)',
+      'sunshine': 'Wear sunscreen. (try: sunscreen)',
+      'storm': 'Hold on to your coffee. (try: thunder)'
+    };
+    var KEY = 'kk.console', UKEY = 'kk.console.ui';
+    var DOCKS = ['float', 'bottom', 'right', 'top', 'left'];
+
+    /* ---- transcript state (per tab) ---- */
+    function load() { try { return JSON.parse(sessionStorage.getItem(KEY)) || {}; } catch (e) { return {}; } }
+    function save() { try { sessionStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
+    var state = load();
+    state.lines = state.lines || [];
+    state.history = state.history || [];
+    var hIdx = state.history.length;
+
+    /* ---- window state (remembered) ---- */
+    function loadUI() { try { return JSON.parse(localStorage.getItem(UKEY)) || {}; } catch (e) { return {}; } }
+    function saveUI() { try { localStorage.setItem(UKEY, JSON.stringify(U)); } catch (e) {} }
+    var U = loadUI();
+    if (DOCKS.indexOf(U.dock) < 0) U.dock = 'float';
+
+    function isSide(d) { return d === 'left' || d === 'right'; }
+    function effectiveDock() { return isSide(U.dock) && window.innerWidth < 900 ? 'bottom' : U.dock; }
+    function defaultSize(d) { return isSide(d) ? Math.min(420, Math.round(window.innerWidth * 0.32)) : Math.min(320, Math.round(window.innerHeight * 0.34)); }
+    function clampSize(d, s) {
+      var max = isSide(d) ? window.innerWidth - 480 : window.innerHeight - 200;
+      return Math.max(120, Math.min(s, Math.max(160, max)));
+    }
+    function layout() {
+      var d = effectiveDock();
+      el.setAttribute('data-dock', d);
+      el.style.cssText = '';
+      ['Top', 'Right', 'Bottom', 'Left'].forEach(function (s) { document.body.style['padding' + s] = ''; });
+      if (d === 'float') {
+        if (U.x != null && U.y != null) {
+          var x = Math.max(0, Math.min(U.x, window.innerWidth - 120)), y = Math.max(0, Math.min(U.y, window.innerHeight - 60));
+          el.style.left = x + 'px'; el.style.top = y + 'px'; el.style.right = 'auto'; el.style.bottom = 'auto';
+        }
+        if (U.w && U.h) { el.style.width = Math.min(U.w, window.innerWidth - 32) + 'px'; el.style.height = Math.min(U.h, window.innerHeight - 32) + 'px'; }
+      } else {
+        var s = clampSize(d, U.size || defaultSize(d));
+        if (isSide(d)) el.style.width = s + 'px'; else el.style.height = s + 'px';
+        if (!el.hidden) document.body.style['padding' + d.charAt(0).toUpperCase() + d.slice(1)] = s + 'px';
+      }
+      modeEl.textContent = d === 'float' ? '' : '· ' + d;
+      if (window.site && window.site.ambient) window.site.ambient.refresh(true);
+      if (window.site && window.site.pets) window.site.pets.refresh();
+    }
+    function setDock(d) {
+      if (DOCKS.indexOf(d) < 0) return false;
+      U.dock = d; if (d !== 'float') U.expanded = false;
+      saveUI(); layout(); return true;
+    }
+    function setSize(px) {
+      var d = effectiveDock();
+      if (d === 'float') { U.w = Math.max(280, px); U.h = Math.round(U.w * 0.55); }
+      else U.size = clampSize(d, px);
+      U.expanded = false; saveUI(); layout();
+    }
+    function expand() {
+      var d = effectiveDock();
+      if (U.expanded) {
+        if (d === 'float') { U.w = U.prevW; U.h = U.prevH; } else U.size = U.prevSize;
+        U.expanded = false;
+      } else {
+        if (d === 'float') { U.prevW = U.w; U.prevH = U.h; U.w = window.innerWidth - 32; U.h = Math.round(window.innerHeight * 0.6); U.x = 16; U.y = window.innerHeight - U.h - 16; }
+        else { U.prevSize = U.size || defaultSize(d); U.size = isSide(d) ? Math.round(window.innerWidth * 0.5) : Math.round(window.innerHeight * 0.6); }
+        U.expanded = true;
+      }
+      saveUI(); layout();
+    }
+
+    /* drag to move (float) and drag the grip to resize (docked) */
+    var bar = el.querySelector('.console-bar'), grip = el.querySelector('.console-grip');
+    bar.addEventListener('pointerdown', function (e) {
+      if (e.target.closest('button') || effectiveDock() !== 'float') return;
+      var r = el.getBoundingClientRect(), dx = e.clientX - r.left, dy = e.clientY - r.top;
+      bar.setPointerCapture(e.pointerId);
+      function move(ev) { U.x = ev.clientX - dx; U.y = ev.clientY - dy; el.style.left = Math.max(0, U.x) + 'px'; el.style.top = Math.max(0, U.y) + 'px'; el.style.right = 'auto'; el.style.bottom = 'auto'; }
+      function up() { bar.removeEventListener('pointermove', move); bar.removeEventListener('pointerup', up); saveUI(); }
+      bar.addEventListener('pointermove', move); bar.addEventListener('pointerup', up);
+      e.preventDefault();
+    });
+    grip.addEventListener('pointerdown', function (e) {
+      var d = effectiveDock(); if (d === 'float') return;
+      grip.setPointerCapture(e.pointerId); el.classList.add('is-resizing');
+      var pending = null;
+      function move(ev) {
+        var s = d === 'bottom' ? window.innerHeight - ev.clientY : d === 'top' ? ev.clientY : d === 'left' ? ev.clientX : window.innerWidth - ev.clientX;
+        U.size = clampSize(d, s); U.expanded = false;
+        if (isSide(d)) el.style.width = U.size + 'px'; else el.style.height = U.size + 'px';
+        document.body.style['padding' + d.charAt(0).toUpperCase() + d.slice(1)] = U.size + 'px';
+        if (!pending) pending = requestAnimationFrame(function () { pending = null; if (window.site.ambient) window.site.ambient.refresh(true); if (window.site.pets) window.site.pets.refresh(); });
+      }
+      function up() { grip.removeEventListener('pointermove', move); grip.removeEventListener('pointerup', up); el.classList.remove('is-resizing'); saveUI(); }
+      grip.addEventListener('pointermove', move); grip.addEventListener('pointerup', up);
+      e.preventDefault();
+    });
+    if (window.ResizeObserver) {
+      var ro = new ResizeObserver(function () {
+        if (el.hidden || effectiveDock() !== 'float' || el.classList.contains('is-resizing')) return;
+        var r = el.getBoundingClientRect();
+        if (Math.abs(r.width - (U.w || 0)) > 2 || Math.abs(r.height - (U.h || 0)) > 2) { U.w = Math.round(r.width); U.h = Math.round(r.height); saveUI(); }
+      });
+      ro.observe(el);
+    }
+    el.querySelector('[data-console-dock]').addEventListener('click', function () { setDock(DOCKS[(DOCKS.indexOf(U.dock) + 1) % DOCKS.length]); });
+    el.querySelector('[data-console-expand]').addEventListener('click', expand);
+    window.addEventListener('resize', function () { if (!el.hidden) layout(); });
+
+    /* ---- transcript ---- */
+    function render() {
+      out.textContent = '';
+      state.lines.forEach(function (l) {
+        var d = document.createElement('div');
+        d.className = 'l-' + l.t;
+        d.textContent = l.s;
+        out.appendChild(d);
+      });
+      out.scrollTop = out.scrollHeight;
+    }
+    function print(s, t) {
+      state.lines.push({ s: s, t: t || 'out' });
+      if (state.lines.length > 300) state.lines.shift();
+      save(); render();
+    }
+    function open() {
+      el.hidden = false; state.open = true; save(); layout();
+      if (!state.lines.length) print('karankapoor.dev — type help', 'dim');
+      render(); input.focus();
+    }
+    function close() { el.hidden = true; state.open = false; save(); layout(); }
+
+    function setTheme(name) {
+      window.site.setTheme(name);
+      print('theme: ' + name);
+      if (QUOTES[name]) print(QUOTES[name], 'dim');
+    }
+
+    /* Matrix rain, full-screen, behind the page. Off under reduced motion. */
+    function rain(on) {
+      var c = document.getElementById('rain');
+      if (!on) { if (c) { cancelAnimationFrame(c._raf); c.remove(); } return; }
+      if (c) return;
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) { print('Reduced motion is on; no rain.', 'dim'); return; }
+      c = document.createElement('canvas'); c.id = 'rain'; document.body.appendChild(c);
+      var ctx = c.getContext('2d');
+      function size() { c.width = window.innerWidth; c.height = window.innerHeight; }
+      size(); window.addEventListener('resize', size);
+      var fs = 14, drops = [];
+      var chars = 'ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄ0123456789';
+      function step() {
+        var cols = Math.floor(c.width / fs);
+        while (drops.length < cols) drops.push(Math.random() * -50);
+        var m = getComputedStyle(document.body).backgroundColor.match(/\d+/g) || [0, 0, 0];
+        ctx.fillStyle = 'rgba(' + m[0] + ',' + m[1] + ',' + m[2] + ',0.08)';
+        ctx.fillRect(0, 0, c.width, c.height);
+        ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--text-muted').trim() || '#0f0';
+        ctx.font = fs + 'px monospace';
+        for (var i = 0; i < cols; i++) {
+          ctx.fillText(chars[Math.floor(Math.random() * chars.length)], i * fs, drops[i] * fs);
+          if (drops[i] * fs > c.height && Math.random() > 0.975) drops[i] = 0;
+          drops[i]++;
+        }
+        c._raf = requestAnimationFrame(step);
+      }
+      step();
+    }
+
+    var cmds = {
+      help: function () {
+        print('help                       this list');
+        print('theme list                 themes, by group');
+        print('theme list --all           every theme, flat');
+        print('theme list --trendy | --editor | --retro | --seasonal | --weather | --site | --light | --dark');
+        print('theme set <name>           switch theme (saved for next time)');
+        print('pet <cat|dog|duck|off>     toggle a pet in the margins');
+        print('dock <float|bottom|top|left|right>   pin this window; content reflows');
+        print('size <px>                  window size · expand   toggle big/small');
+        print('go <page>                  open a page');
+        print('ls                         list pages');
+        print('whoami');
+        print('clear');
+        print('close                      or Esc');
+        print('…and a few things that are not on this list.', 'dim');
+      },
+      theme: function (a) {
+        var api = window.site;
+        if (!a[0] || a[0] === 'list') {
+          var cur = api.getTheme();
+          var mark = function (t) { return t === cur ? '[' + t + ']' : t; };
+          var named = api.themes.filter(function (t) { return t !== 'default' && t !== 'system'; });
+          var flag = (a[1] || '').replace(/^--?/, '');
+          var pad = function (s) { return (s + '          ').slice(0, 10); };
+          if (!flag) {
+            Object.keys(GROUPS).forEach(function (g) { print(pad(g) + GROUPS[g].map(mark).join('  ')); });
+            print(pad('system') + (cur === 'system' ? '[current]' : 'follow the OS') + '   (default is an alias)', 'dim');
+            print('theme list --<group> | --all | --light | --dark', 'dim');
+            print('on wide screens, most themes leave something in the margins.', 'dim');
+          } else if (flag === 'all') {
+            print(named.map(mark).join('  '));
+          } else if (flag === 'light' || flag === 'dark') {
+            print(named.filter(function (t) { return api.isDarkTheme(t) === (flag === 'dark'); }).map(mark).join('  '));
+          } else if (GROUPS[flag]) {
+            print(GROUPS[flag].map(mark).join('  '));
+          } else {
+            print('Unknown flag "' + a[1] + '". Groups: ' + Object.keys(GROUPS).join(', ') + ', all, light, dark', 'err');
+          }
+        } else if (a[0] === 'set') {
+          if (api.themes.indexOf(a[1]) < 0) { print('Unknown theme "' + (a[1] || '') + '". Try: theme list', 'err'); return; }
+          setTheme(a[1]);
+        } else {
+          print('Usage: theme list | theme set <name>', 'err');
+        }
+      },
+      pet: function (a) {
+        var P = window.site.pets;
+        if (!P) { print('No pets on this page.', 'err'); return; }
+        var k = a[0];
+        if (!k || k === 'list') {
+          var have = P.list();
+          print('pets: ' + (have.length ? have.join(', ') : 'none') + '   available: ' + P.kinds.join(', '));
+          print('pet <name> toggles · pet off removes all · they need a wide window', 'dim');
+          return;
+        }
+        if (k === 'off' || k === 'none') { P.clear(); print('All pets sent home.'); return; }
+        if (P.kinds.indexOf(k) < 0) { print('No such pet. Try: ' + P.kinds.join(', '), 'err'); return; }
+        var on = P.toggle(k);
+        print(on ? k + ' adopted. Look ' + (P.list().length % 2 ? 'left' : 'right') + '.' : k + ' went home.');
+        if (on && !window.site.gutters()) print('(the window is too narrow for the margins right now)', 'dim');
+      },
+      dock: function (a) {
+        if (!a[0]) { print('dock: ' + U.dock + (effectiveDock() !== U.dock ? ' (shown as ' + effectiveDock() + ' at this width)' : '')); print('Usage: dock <' + DOCKS.join('|') + '>', 'dim'); return; }
+        if (!setDock(a[0])) { print('Usage: dock <' + DOCKS.join('|') + '>', 'err'); return; }
+        print('docked: ' + a[0] + (a[0] === 'float' ? '  (drag the bar to move, corner to resize)' : '  (drag the edge to resize)'));
+      },
+      size: function (a) {
+        var n = parseInt(a[0], 10);
+        if (!n) { print('Usage: size <px>', 'err'); return; }
+        setSize(n); print('size: ' + (effectiveDock() === 'float' ? U.w + '×' + U.h : U.size) + 'px');
+      },
+      expand: function () { expand(); print(U.expanded ? 'expanded' : 'restored'); },
+      go: function (a) {
+        var p = PAGES[a[0]];
+        if (!p) { print('Usage: go <' + Object.keys(PAGES).join('|') + '>', 'err'); return; }
+        print('→ ' + a[0]); location.href = p;
+      },
+      ls: function () {
+        Object.keys(PAGES).forEach(function (k) { print((k + '            ').slice(0, 12) + PAGES[k]); });
+      },
+      whoami: function () {
+        print({{ site.whoami | jsonify }});
+        print('currently:', 'dim');
+        {% for item in site.now %}print('  · ' + {{ item | jsonify }});
+        {% endfor %}
+      },
+      clear: function () { state.lines = []; save(); render(); },
+      close: close,
+      exit: close,
+
+      /* ---- not on the help list ---- */
+      crawl: function () {
+        ['A long time ago in a galaxy far, far away....', '',
+         'EPISODE IX', 'A NEW SITE', '',
+         'It is a period of side projects. Rebel engineers, striking from a hidden repo,',
+         'have won their first victory against the placeholder content.', '',
+         'Pursued by the sinister Tech Debt, Karan races home aboard his laptop,',
+         'custodian of the numbers that are public....'
+        ].forEach(function (l) { print(l, 'dim'); });
+        if (window.site.getTheme() !== 'star-wars') print('(theme set star-wars looks better — and watch the career page)', 'dim');
+      },
+      force: function () { print("These aren't the droids you're looking for."); },
+      hyperspace: function () {
+        if (window.site.getTheme() !== 'star-wars') { print('No hyperdrive on this theme. Try: theme set star-wars', 'dim'); return; }
+        if (!window.site.gutters()) { print('Too narrow to jump — the stars need the margins.', 'dim'); return; }
+        window.site.ambient.trigger('jump'); print('Punch it, Chewie.');
+      },
+      jump: function () { cmds.hyperspace(); },
+      jarvis: function () {
+        var P = window.site.pets, U = null;
+        try { U = JSON.parse(localStorage.getItem('kk.console.ui')) || {}; } catch (e) { U = {}; }
+        print('At your service, sir.');
+        print('  theme    ' + window.site.getTheme() + (window.site.flipped() ? ' (flipped)' : ''), 'dim');
+        print('  dock     ' + (U.dock || 'float'), 'dim');
+        print('  pets     ' + (P && P.list().length ? P.list().join(', ') : 'none'), 'dim');
+        print('  page     ' + location.pathname, 'dim');
+        print('  viewport ' + window.innerWidth + '×' + window.innerHeight + (window.site.gutters() ? ' · margins on' : ' · margins off'), 'dim');
+        if (window.site.getTheme() !== 'avengers') print('(theme set avengers, if you want the suit)', 'dim');
+      },
+      snap: function () {
+        document.body.classList.add('snapped');
+        print('*snap*'); print('Perfectly balanced, as all things should be.', 'dim');
+      },
+      assemble: function () { document.body.classList.remove('snapped'); print('Avengers, assemble.'); },
+      redpill: function () { setTheme('matrix'); rain(true); print('Follow the white rabbit.', 'dim'); },
+      bluepill: function () { rain(false); setTheme('system'); print('You wake up in your bed and believe whatever you want to believe.', 'dim'); },
+      rain: function (a) { rain(a[0] !== 'off'); print(a[0] === 'off' ? 'rain: off' : 'rain: on  (rain off to stop)'); },
+      neo: function () { print('Wake up, Neo…'); print('The Matrix has you.', 'dim'); print('Follow the white rabbit.', 'dim'); },
+      sudo: function () { print('karan is not in the sudoers file. This incident will be reported.', 'err'); },
+      hello: function () { print('Hello, world.'); },
+      coffee: function () { print('HTTP 418: I\'m a teapot.', 'err'); },
+
+      /* ---- weather ---- */
+      forecast: function () {
+        var days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
+        var wx = [['rain', '☂  light rain, bring a book'], ['snow', '❄  snow, roads closed, work from home'],
+                  ['sunshine', '☀  clear, 29°, wear sunscreen'], ['storm', '⚡ thunderstorms, hold my coffee'],
+                  ['sunshine', '☀  bright, mild, suspiciously nice']];
+        print('5-day forecast for karankapoor.dev', 'dim');
+        days.forEach(function (d, i) { print(d + '  ' + wx[i][1] + '   (theme set ' + wx[i][0] + ')'); });
+      },
+      umbrella: function () {
+        var t = window.site.getTheme();
+        if (t !== 'rain' && t !== 'storm') { print('Not raining. Try: theme set rain', 'dim'); return; }
+        var paused = window.site.ambient.pause();
+        print(paused ? 'Umbrella up. Dry, for now.' : 'Umbrella down. Back to the rain.');
+      },
+      snowman: function () {
+        ['      _', '    _[_]_', "     (\")", '   `( : )´', '   (  :  )', "  '~~~~~~~'"].forEach(function (l) { print(l, 'dim'); });
+        print('Do you want to build a snowman?');
+        if (window.site.getTheme() !== 'snow') print('(theme set snow, for the full effect)', 'dim');
+      },
+      sunscreen: function () {
+        print('Wear sunscreen.');
+        print('If I could offer you only one tip for the future, sunscreen would be it.', 'dim');
+        if (window.site.getTheme() === 'sunshine') print('SPF 50 applied.', 'dim');
+      },
+      thunder: function () {
+        if (window.site.getTheme() !== 'storm') { print('Clear skies. Try: theme set storm', 'dim'); return; }
+        window.site.ambient.trigger('bolt');
+        print('⚡  …one Mississippi, two Mississippi…', 'dim');
+      }
+    };
+
+    function run(line) {
+      var parts = line.trim().split(/\s+/);
+      var c = parts[0];
+      if (!c) return;
+      print('$ ' + line, 'cmd');
+      state.history.push(line);
+      if (state.history.length > 50) state.history.shift();
+      hIdx = state.history.length;
+      if (cmds[c]) cmds[c](parts.slice(1)); else print('Bad command "' + c + '". Try help.', 'err');
+      save();
+    }
+
+    form.addEventListener('submit', function (e) { e.preventDefault(); run(input.value); input.value = ''; });
+    input.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowUp') { if (hIdx > 0) { hIdx--; input.value = state.history[hIdx] || ''; } e.preventDefault(); }
+      else if (e.key === 'ArrowDown') { if (hIdx < state.history.length) { hIdx++; input.value = state.history[hIdx] || ''; } e.preventDefault(); }
+      else if (e.key === 'Escape') { close(); }
+    });
+    el.querySelector('.console-close').addEventListener('click', close);
+    document.querySelectorAll('[data-console-toggle]').forEach(function (b) {
+      b.addEventListener('click', function () { if (el.hidden) open(); else close(); });
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      var t = e.target;
+      var typing = t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable);
+      if (e.key === '`' && !typing) { e.preventDefault(); if (el.hidden) open(); else close(); }
+      else if (e.key === 'Escape' && !el.hidden) { close(); }
+    });
+
+    if (state.open) { el.hidden = false; render(); }
+    layout();
+    window.site = window.site || {};
+    window.site.console = { open: open, close: close, print: print, dock: setDock, size: setSize, expand: expand };
+  })();
+</script>
