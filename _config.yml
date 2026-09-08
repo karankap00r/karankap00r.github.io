@@ -47,7 +47,7 @@ defaults:
 nav:
   - { label: "Home",       url: "/",            key: "h" }
   - { label: "Prototypes", url: "/prototypes/", key: "p" }
-  - { label: "Writing",    url: "/blogs/",      key: "w" }
+  - { label: "Blogs",      url: "/blogs/",      key: "b" }
   - { label: "Career",     url: "/career/",     key: "c" }
   - { label: "About",      url: "/about/",      key: "a" }
 
