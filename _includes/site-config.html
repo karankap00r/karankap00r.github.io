@@ -1,0 +1,15 @@
+<script>
+  /* Site configuration for the scripts in assets/js, rendered once from
+     _config.yml. Everything theme- or nav-related the scripts need lives
+     here, so the scripts themselves are plain static files. */
+  window.SITE = {
+    title: {{ site.title | jsonify }},
+    nav: [{% for item in site.nav %}{ label: {{ item.label | jsonify }}, url: {{ item.url | relative_url | jsonify }}, key: {{ item.key | jsonify }} }{% unless forloop.last %}, {% endunless %}{% endfor %}],
+    themesLight: {{ site.themes_light | jsonify }},
+    themesDark: {{ site.themes_dark | jsonify }},
+    themeGroups: {{ site.theme_groups | jsonify }},
+    themeFonts: {{ site.theme_fonts | jsonify }},
+    whoami: {{ site.whoami | jsonify }},
+    now: {{ site.now | jsonify }}
+  };
+</script>
