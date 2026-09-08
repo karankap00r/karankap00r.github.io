@@ -548,7 +548,9 @@ body, main, .site-header, .site-footer, .console, .site-nav a, .theme-toggle, .c
 .arcade-gate.shake { animation: arcade-shake 0.4s; }
 @keyframes arcade-shake { 0%, 100% { transform: none; } 20% { transform: translateX(-6px); } 40% { transform: translateX(6px); } 60% { transform: translateX(-4px); } 80% { transform: translateX(4px); } }
 .arcade-hud { display: flex; justify-content: space-between; gap: 1rem; margin: 0 0 0.6rem; font-size: 0.8rem; letter-spacing: 0.12em; color: var(--text-muted); }
-.arcade-hud span:nth-child(2) { color: var(--text); }
+.arcade-hud span:nth-child(2) { color: var(--text); text-align: center; }
+.arcade-hud span { white-space: nowrap; }
+@media (max-width: 640px) { .arcade.is-playing .arcade-hud { font-size: 0.7rem; letter-spacing: 0.06em; gap: 0.5rem; } .arcade.is-playing .arcade-hud span:first-child { white-space: normal; } .arcade.is-playing .arcade-hud span:nth-child(2) { display: none; } .arcade.is-playing .arcade-help { font-size: 0.68rem; } }
 .arcade-stage { display: flex; align-items: flex-end; justify-content: center; gap: 1.2rem; }
 #arcade-canvas { display: block; border: 1px solid var(--rule); background: #000; cursor: none; touch-action: none; }
 .arcade-buddy { position: relative; flex-shrink: 0; }
@@ -572,10 +574,23 @@ body, main, .site-header, .site-footer, .console, .site-nav a, .theme-toggle, .c
 @keyframes arcade-bubble { from { opacity: 0; transform: translate(-50%, -90%) scale(0.9); } }
 @media (max-width: 700px) { .arcade-buddy { display: none; } }
 .arcade-help { margin: 0.6rem 0 0; font-size: 0.72rem; letter-spacing: 0.08em; color: var(--text-faint); }
+.arcade-actions { display: flex; gap: 0.6rem; justify-content: center; }
 .arcade-exit {
   margin-top: 0.7rem; background: transparent; color: var(--text); border: 1px solid var(--text);
   padding: 0.4rem 1rem; font: inherit; font-size: 0.8rem; letter-spacing: 0.15em; cursor: pointer;
 }
+/* The game menu, shown after the collapse. */
+.arcade-menu { text-align: center; }
+.arcade-menu-list { display: flex; flex-direction: column; gap: 0.6rem; margin: 0 0 1rem; min-width: min(26rem, 80vw); }
+.arcade-menu-list button {
+  display: grid; grid-template-columns: 2rem 1fr; grid-template-rows: auto auto; column-gap: 0.75rem; align-items: center; text-align: left;
+  background: transparent; color: var(--text); border: 1px solid var(--rule); padding: 0.8rem 1rem; font: inherit; cursor: pointer;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+.arcade-menu-list button b { grid-row: 1 / 3; font-size: 1.3rem; color: var(--accent); }
+.arcade-menu-list button span { font-size: 0.95rem; letter-spacing: 0.15em; }
+.arcade-menu-list button small { font-size: 0.72rem; color: var(--text-muted); letter-spacing: 0.04em; }
+.arcade-menu-list button:hover, .arcade-menu-list button:focus-visible { border-color: var(--accent); background: rgba(127, 127, 127, 0.08); outline: none; }
 .arcade-exit small { font-size: 0.65rem; letter-spacing: 0.08em; color: var(--text-muted); margin-left: 0.4rem; }
 .arcade-exit:hover { background: var(--text); color: var(--bg); }
 .arcade-exit:hover small { color: var(--bg); }
